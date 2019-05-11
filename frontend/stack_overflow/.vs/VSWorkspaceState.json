@@ -1,0 +1,16 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\src",
+    "\\src\\model",
+    "\\src\\model\\question",
+    "\\src\\model\\tag",
+    "\\src\\model\\user",
+    "\\src\\presenter",
+    "\\src\\rest",
+    "\\src\\view",
+    "\\src\\view\\question"
+  ],
+  "SelectedNode": "\\src\\rest\\QuestionRestClient.js",
+  "PreviewInSolutionExplorer": false
+}
