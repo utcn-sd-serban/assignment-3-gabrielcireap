@@ -4,15 +4,12 @@ import { DELETE_ANSWER } from "./answerActionTypes.js";
 import { EDIT_ANSWER } from "./answerActionTypes.js";
 import { UPVOTE_ANSWER } from "./answerActionTypes.js";
 import { DOWNVOTE_ANSWER } from "./answerActionTypes.js";
+import { FIND_ANSWERS_BY_QUESTION } from "./answerActionTypes";
 
-export function addAnswer(user, question, text, creationDate, voteCount) {
+export function addAnswer(answer) {
 
     let payload = {
-        user,
-        question,
-        text,
-        creationDate,
-        voteCount
+        answer
     };
 
     return {
@@ -49,7 +46,7 @@ export function deleteAnswer(answer) {
 export function editAnswer(answer) {
 
     let payload = {
-        answer: answer
+        answer
     };
 
     return {
@@ -81,5 +78,14 @@ export function downvote(answer, count) {
     return {
         type: DOWNVOTE_ANSWER,
         payload
+    };
+}
+
+export function findByQuestion(answers) {
+    return {
+        type: FIND_ANSWERS_BY_QUESTION,
+        payload: {
+            answers
+        }
     };
 }

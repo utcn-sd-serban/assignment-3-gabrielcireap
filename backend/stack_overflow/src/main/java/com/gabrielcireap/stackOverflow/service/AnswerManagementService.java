@@ -1,6 +1,7 @@
 package com.gabrielcireap.stackOverflow.service;
 
 import com.gabrielcireap.stackOverflow.dto.AnswerDTO;
+import com.gabrielcireap.stackOverflow.dto.QuestionDTO;
 import com.gabrielcireap.stackOverflow.entity.Answer;
 import com.gabrielcireap.stackOverflow.entity.Question;
 import com.gabrielcireap.stackOverflow.entity.User;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,13 +33,25 @@ public class AnswerManagementService {
 
         User answerUser = new User();
         answerUser.setId(answerDTO.getUser().getId());
+        answerUser.setScore(answerDTO.getUser().getScore());
+        answerUser.setUsername(answerDTO.getUser().getUsername());
+        answerUser.setIsBanned(answerDTO.getUser().getIsBanned());
+        answerUser.setIsAdmin(answerDTO.getUser().getIsAdmin());
+
         Question question = new Question();
         question.setId(answerDTO.getQuestion().getId());
+        question.setCreationDate(answerDTO.getQuestion().getCreationDate());
+        question.setVoteCount(answerDTO.getQuestion().getVoteCount());
+        question.setText(answerDTO.getQuestion().getText());
+        question.setTitle(answerDTO.getQuestion().getTitle());
+
         answer.setUser(answerUser);
         answer.setQuestion(question);
-
-        answer.setId(repositoryFactory.createAnswerRepository().save(answer).getId());
-        return AnswerDTO.ofEntity(answer);
+        answer.setId(answerDTO.getId());
+        Answer dto =  repositoryFactory.createAnswerRepository().save(answer);
+        System.out.println("Received " + dto);
+        return AnswerDTO.ofEntity(dto);
+        //return AnswerDTO.ofEntity(answer);
     }
 
     @Transactional
@@ -76,5 +91,12 @@ public class AnswerManagementService {
     @Transactional
     public AnswerDTO findById(int id) {
         return AnswerDTO.ofEntity(repositoryFactory.createAnswerRepository().findById(id).orElseThrow(AnswerNotFoundException::new));
+    }
+
+    @Transactional
+    public List<AnswerDTO> findByQuestion(int id){
+        Question question = new Question();
+        question.setId(id);
+        return repositoryFactory.createAnswerRepository().findByQuestion(question).stream().map(AnswerDTO::ofEntity).collect(Collectors.toList());
     }
 }

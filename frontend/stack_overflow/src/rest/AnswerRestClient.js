@@ -1,62 +1,66 @@
 const BASE_URL = "http://localhost:8080";
 
-export default class QuestionRestClient {
+export default class AnswerRestClient {
     constructor(username, password) {
         this.authorization = "Basic " + btoa(username + ":" + password);
     }
 
-    addQuestion(user, title, text, voteCount, tags) {
-        let questionDTO = {
+    addAnswer(loggedUser, selectedQuestion, text, voteCount) {
+        let answerDTO = {
             id: "",
-            user: {
-                id: user.id,
-                username: user.username,
-                score: user.score,
-                isAdmin: user.isAdmin,
-                isBanned: user.isBanned
+            question: {
+                ...selectedQuestion,
+                creationDate: null
             },
-            title,
+            user: loggedUser,
             text,
             creationDate: null,
-            voteCount,
-            tags
+            voteCount
         };
-        
-        return fetch(BASE_URL + "/questions", {
+
+        return fetch(BASE_URL + "/answers", {
             method: "POST",
             headers: {
                 "Authorization": this.authorization,
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(questionDTO)
+            body: JSON.stringify(answerDTO)
         }).then(response => response.json());
     }
 
-    loadQuestions() {
-        return fetch(BASE_URL + "/questions", {
-            method: "GET",
+    editAnswer(currentAnswer) {
+        let answerDTO = {
+            id: currentAnswer.id,
+            question: currentAnswer.question,
+            user: currentAnswer.user,
+            text: currentAnswer.text,
+            creationDate: currentAnswer.creationDate,
+            voteCount: currentAnswer.voteCount
+        };
+
+        return fetch(BASE_URL + "/answers", {
+            method: "PUT",
             headers: {
                 "Authorization": this.authorization,
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
-            }
+            },
+            body: JSON.stringify(answerDTO)
         }).then(response => response.json());
     }
 
-    findQuestionByTitle(title) {
-        return fetch(BASE_URL + "/questions/search?title=" + title, {
-            method: "GET",
+    deleteAnswer(id) {
+        return fetch(BASE_URL + "/answers/" + id, {
+            method: "DELETE",
             headers: {
-                "Authorization": this.authorization,
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                "Authorization": this.authorization
             }
         }).then(response => response.json());
     }
 
-    findQuestionByTag(tag) {
-        return fetch(BASE_URL + "/questions/search?tag=" + tag, {
+    findByQuestion(questionId) {
+        return fetch(BASE_URL + "/questions/" + questionId, {
             method: "GET",
             headers: {
                 "Authorization": this.authorization,

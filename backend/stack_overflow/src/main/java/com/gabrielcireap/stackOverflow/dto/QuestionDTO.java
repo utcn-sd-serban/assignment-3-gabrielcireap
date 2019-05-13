@@ -21,6 +21,7 @@ public class QuestionDTO {
     private List<String> tags;
 
     public static QuestionDTO ofEntity(Question question) {
+        System.out.println(question);
         QuestionDTO questionDTO = new QuestionDTO();
         questionDTO.setId(question.getId());
         questionDTO.setTitle(question.getTitle());

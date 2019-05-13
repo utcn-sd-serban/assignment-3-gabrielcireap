@@ -29,7 +29,7 @@ const QuestionsTable = ({ questions, onAnswer, onDeleteQuestion, onUpvoteQuestio
                             <td className="has-text-centered"> {question.creationDate} </td>
                             <td className="has-text-centered"> {question.voteCount} </td>
                             <td> {tagToString(question.tags)} </td>
-                            <td><button className="button is-link" onClick={() => onAnswer(index)}> Answer </button></td>
+                            <td><button className="button is-link" onClick={() => onAnswer(question.id)}> Answer </button></td>
                             <td><button className="button is-warning" onClick={() => onDeleteQuestion(question.id)}> Delete </button></td>
                             <td><button className="button is-success" onClick={() => onUpvoteQuestion(question.id)}> Upvote </button></td>
                             <td><button className="button is-danger" onClick={() => onDownvoteQuestion(question.id)}> Downvote </button></td>

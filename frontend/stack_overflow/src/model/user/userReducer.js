@@ -4,7 +4,7 @@ import { UPDATE_SCORE } from "./userActionTypes";
 import { BAN } from "./userActionTypes";
 import { LOG_USER } from "./userActionTypes";
 import { LOAD_USERS } from "./userActionTypes";
-import RestClient from "../../rest/RestClient";
+import RestClient from "../../rest/UserRestClient";
 
 const initialState = {
     users: [{

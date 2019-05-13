@@ -17,6 +17,7 @@ public class AnswerDTO {
 
     public static AnswerDTO ofEntity(Answer answer) {
         AnswerDTO answerDTO = new AnswerDTO();
+        answerDTO.setId(answer.getId());
         answerDTO.setQuestion(QuestionDTO.ofEntity(answer.getQuestion()));
         answerDTO.setUser(UserShowDTO.ofEntity(answer.getUser()));
         answerDTO.setText(answer.getText());

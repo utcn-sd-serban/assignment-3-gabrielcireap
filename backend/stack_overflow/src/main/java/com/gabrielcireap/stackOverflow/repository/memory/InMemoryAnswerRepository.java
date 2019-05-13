@@ -37,6 +37,6 @@ public class InMemoryAnswerRepository implements AnswerRepository {
 
     @Override
     public List<Answer> findByQuestion(Question question) {
-        return data.values().stream().filter(answer -> answer.getQuestion().equals(question)).collect(Collectors.toList());
+        return data.values().stream().filter(answer -> answer.getQuestion().getId() == question.getId()).collect(Collectors.toList());
     }
 }

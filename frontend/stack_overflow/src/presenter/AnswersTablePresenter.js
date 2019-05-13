@@ -5,6 +5,8 @@ import * as userActions from "../model/user/userActions";
 import * as voteSelectors from "../model/vote/voteSelectors";
 import * as voteActions from "../model/vote/voteActions";
 import store from "../model/store/store";
+import AnswerRestClient from "../rest/AnswerRestClient";
+const client = new AnswerRestClient("user1", "pass1");
 
 class AnswersTablePresenter {
 
@@ -13,14 +15,11 @@ class AnswersTablePresenter {
         let loggedUser = userSelectors.getLoggedUser();
         let newAnswer = answerSelectors.getNewAnswer();
 
-        store.dispatch(answerActions.addAnswer(
-            loggedUser,
-            selectedQuestion,
-            newAnswer.text,
-            new Date(Date.now()).toLocaleDateString('en-GB'),
-            0
-        ));
-        
+        client.addAnswer(loggedUser, selectedQuestion, newAnswer.text, 0)
+            .then(answer => {
+                store.dispatch(answerActions.addAnswer(answer));
+            });
+
         store.dispatch(answerActions.changeNewAnswerProperty("text", ""));
     }
 
@@ -29,14 +28,17 @@ class AnswersTablePresenter {
     }
 
     onEditAnswer(id) {
-        
-        let currentAnswer = answerSelectors.findById(id);
+
+        let currentAnswer = answerSelectors.findBySearchedQuestionId(id);
         currentAnswer.text = answerSelectors.getNewAnswer().text;
         let loggedUser = userSelectors.getLoggedUser();
 
         if (currentAnswer.user.username === loggedUser.username && currentAnswer.user.password === loggedUser.password
             || loggedUser.isAdmin === true) {
-            store.dispatch(answerActions.editAnswer(currentAnswer));
+            client.editAnswer(currentAnswer).then(answer => {
+                debugger;
+                store.dispatch(answerActions.editAnswer(answer));
+            });
         } else {
             window.alert("You are neither the author nor an admin!");
         }
@@ -45,7 +47,7 @@ class AnswersTablePresenter {
 
     onDeleteAnswer(id) {
 
-        let currentAnswer = answerSelectors.findById(id);
+        let currentAnswer = answerSelectors.findBySearchedQuestionId(id);
         let loggedUser = userSelectors.getLoggedUser();
 
         if (currentAnswer.user.username === loggedUser.username && currentAnswer.user.password === loggedUser.password
@@ -57,7 +59,7 @@ class AnswersTablePresenter {
     }
 
     onUpvoteAnswer(answerId) {
-        let currentAnswer = answerSelectors.findById(answerId);
+        let currentAnswer = answerSelectors.findBySearchedQuestionId(answerId);
         let loggedUser = userSelectors.getLoggedUser();
 
         if (currentAnswer.user.username === loggedUser.username && currentAnswer.user.password === loggedUser.password) {
@@ -85,7 +87,7 @@ class AnswersTablePresenter {
     }
 
     onDownvoteAnswer(answerId) {
-        let currentAnswer = answerSelectors.findById(answerId);
+        let currentAnswer = answerSelectors.findBySearchedQuestionId(answerId);
         let loggedUser = userSelectors.getLoggedUser();
 
         if (currentAnswer.user.username === loggedUser.username && currentAnswer.user.password === loggedUser.password) {
@@ -111,6 +113,12 @@ class AnswersTablePresenter {
                 store.dispatch(answerActions.downvote(currentAnswer, 1));
             }
         }
+    }
+
+    onInit(questionId) {
+        client.findByQuestion(questionId).then(answers => {
+            store.dispatch(answerActions.findByQuestion(answers));
+        });
     }
 }
 

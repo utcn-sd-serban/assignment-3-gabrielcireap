@@ -20,11 +20,6 @@ public class QuestionsController {
         return questionManagementService.listQuestions();
     }
 
-    @GetMapping("/questions/{id}")
-    public Map<QuestionDTO, List<AnswerDTO>> findById(@PathVariable int id) {
-        return questionManagementService.findById(id);
-    }
-
     @PostMapping("/questions")
     public QuestionDTO save(@RequestBody QuestionDTO questionDTO) {
         return questionManagementService.save(questionDTO.getTitle(), questionDTO.getText(), questionDTO.getTags());

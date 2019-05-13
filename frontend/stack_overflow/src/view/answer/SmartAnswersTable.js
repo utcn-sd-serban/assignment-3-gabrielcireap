@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import * as answerSelectors from "../../model/answer/answerSelectors";
 import AnswersTable from "./AnswersTable";
 import AnswersInput from "./AnswersInput";
 import AnswersTablePresenter from "../../presenter/AnswersTablePresenter";
@@ -8,8 +7,8 @@ import { toString as userToString } from "../../model/user/userSelectors";
 import { toString as questionToString } from "../../model/question/questionSelectors";
 
 const mapAnswerStateToComponentState = (state, props) => ({
-    selectedQuestion: state.questionState.questions[props.match.params.id],
-    answers: answerSelectors.findByQuestion(state.questionState.questions[props.match.params.id]),
+    selectedQuestion: state.questionState.questions[props.match.params.id-1],
+    answers: state.answerState.answersByQuestion,
     text: state.answerState.newAnswer.text
 });
 
@@ -28,6 +27,10 @@ class SmartAnswersTable extends Component {
 
     constructor(props) {
         super(props);
+    }
+
+    componentDidMount() {
+        AnswersTablePresenter.onInit(this.props.selectedQuestion.id);
     }
 
     render() {

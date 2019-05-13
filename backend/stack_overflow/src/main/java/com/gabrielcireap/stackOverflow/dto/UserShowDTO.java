@@ -13,6 +13,7 @@ public class UserShowDTO {
     private Boolean isBanned;
 
     public static UserShowDTO ofEntity(User user) {
+        System.out.println(user);
         UserShowDTO userDTO = new UserShowDTO();
         userDTO.setId(user.getId());
         userDTO.setUsername(user.getUsername());

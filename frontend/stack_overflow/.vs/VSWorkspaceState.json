@@ -3,14 +3,12 @@
     "",
     "\\src",
     "\\src\\model",
-    "\\src\\model\\question",
-    "\\src\\model\\tag",
-    "\\src\\model\\user",
+    "\\src\\model\\answer",
     "\\src\\presenter",
     "\\src\\rest",
     "\\src\\view",
-    "\\src\\view\\question"
+    "\\src\\view\\answer"
   ],
-  "SelectedNode": "\\src\\rest\\QuestionRestClient.js",
+  "SelectedNode": "\\src\\model\\answer\\answerReducer.js",
   "PreviewInSolutionExplorer": false
 }

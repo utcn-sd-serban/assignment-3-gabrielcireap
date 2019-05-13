@@ -4,114 +4,10 @@ import { DELETE_ANSWER } from "./answerActionTypes.js";
 import { EDIT_ANSWER } from "./answerActionTypes.js";
 import { UPVOTE_ANSWER } from "./answerActionTypes.js";
 import { DOWNVOTE_ANSWER } from "./answerActionTypes.js";
+import { FIND_ANSWERS_BY_QUESTION } from "./answerActionTypes";
 
 const initialState = {
-    answers: [{
-        id: 1,
-        user: {
-            id: 1,
-            username: "user1",
-            password: "pass1",
-            email: "email1",
-            score: 0,
-            isAdmin: true,
-            isBanned: false,
-        },
-        question: {
-            id: 1,
-            user: {
-                id: 1,
-                username: "user1",
-                password: "pass1",
-                email: "email1",
-                score: 0,
-                isAdmin: true,
-                isBanned: false,
-            },
-            title: "title1",
-            text: "text1",
-            creationDate: new Date(Date.now()).toLocaleDateString(),
-            voteCount: 0,
-            tags: [{
-                id: 1,
-                name: "tag1"
-            }]
-        },
-        text: "answer1",
-        creationDate: "12/22/1997",
-        voteCount: 0
-    }, {
-        id: 2,
-        user: {
-            id: 1,
-            username: "user1",
-            password: "pass1",
-            email: "email1",
-            score: 0,
-            isAdmin: true,
-            isBanned: false,
-        },
-        question: {
-            id: 1,
-            user: {
-                id: 1,
-                username: "user1",
-                password: "pass1",
-                email: "email1",
-                score: 0,
-                isAdmin: true,
-                isBanned: false,
-            },
-            title: "title1",
-            text: "text1",
-            creationDate: new Date(Date.now()).toLocaleDateString(),
-            voteCount: 0,
-            tags: [{
-                id: 1,
-                name: "tag1"
-            }]
-        },
-        text: "answer2",
-        creationDate: "12/22/1997",
-        voteCount: 0
-    }, {
-        id: 3,
-        user: {
-            id: 1,
-            username: "user1",
-            password: "pass1",
-            email: "email1",
-            score: 0,
-            isAdmin: true,
-            isBanned: false,
-        },
-        question: {
-            id: 2,
-            user: {
-                id: 1,
-                username: "user1",
-                password: "pass1",
-                email: "email1",
-                score: 0,
-                isAdmin: true,
-                isBanned: false,
-            },
-            title: "ceva titlu",
-            text: "ceva text",
-            creationDate: new Date(Date.now()).toLocaleDateString(),
-            voteCount: 0,
-            tags: [{
-                id: 1,
-                name: "tag1"
-            }, {
-                id: 2,
-                name: "react"
-            }]
-        },
-        text: "answer3",
-        creationDate: "12/22/1997",
-        voteCount: 2
-    }],
+    answers: [],
     newAnswer: {
         id: "",
         user: "",
@@ -120,7 +16,7 @@ const initialState = {
         creationDate: "",
         voteCount: ""
     },
-
+    answersByQuestion: [],
     currentIndex: 4
 };
 
@@ -139,6 +35,8 @@ function answerReducer(state = initialState, action) {
             return sort(upvote(state, action.payload));
         case DOWNVOTE_ANSWER:
             return sort(downvote(state, action.payload));
+        case FIND_ANSWERS_BY_QUESTION:
+            return findByQuestion(state, action.payload);
     }
     return state;
 };
@@ -146,14 +44,7 @@ function answerReducer(state = initialState, action) {
 function addAnswer(state, payload) {
     let newState = {
         ...state,
-        answers: state.answers.concat([{
-            id: state.currentIndex,
-            user: payload.user,
-            question: payload.question,
-            text: payload.text,
-            creationDate: payload.creationDate,
-            voteCount: payload.voteCount
-        }]),
+        answers: state.answers.concat([payload.answer]),
         currentIndex: state.currentIndex + 1
     };
 
@@ -243,6 +134,13 @@ function sort(state) {
         answers: newAnswers
     };
     return newState;
+}
+
+function findByQuestion(state, payload) {
+    return {
+        ...state,
+        answersByQuestion: payload.answers
+    };
 }
 
 export default answerReducer;

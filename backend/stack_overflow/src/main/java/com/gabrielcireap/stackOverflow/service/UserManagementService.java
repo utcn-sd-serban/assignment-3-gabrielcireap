@@ -47,7 +47,6 @@ public class UserManagementService {
     @Transactional
     public UserShowDTO save(UserRegisterDTO userDTO) {
         User user = new User();
-        user.setEmail(userDTO.getEmail());
         user.setUsername(userDTO.getUsername());
         user.setPassword(userDTO.getPassword());
         user.setEmail(userDTO.getEmail());

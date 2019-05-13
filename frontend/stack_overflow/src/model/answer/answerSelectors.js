@@ -5,8 +5,14 @@ export function findByQuestion(question) {
     return answers.filter(answer => answer.question.id === question.id);
 }
 
+/*
 export function findById(id) {
     let answers = store.getState().answerState.answers;
+    return answers.filter(answer => answer.id === id)[0];
+}*/
+
+export function findBySearchedQuestionId(id) {
+    let answers = store.getState().answerState.answersByQuestion;
     return answers.filter(answer => answer.id === id)[0];
 }
 
