@@ -1,0 +1,14 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\src",
+    "\\src\\model",
+    "\\src\\model\\answer",
+    "\\src\\presenter",
+    "\\src\\rest",
+    "\\src\\view",
+    "\\src\\view\\answer"
+  ],
+  "SelectedNode": "\\src\\model\\answer\\answerReducer.js",
+  "PreviewInSolutionExplorer": false
+}
