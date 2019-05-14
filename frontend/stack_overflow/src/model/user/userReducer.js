@@ -15,14 +15,6 @@ const initialState = {
         score: 0,
         isAdmin: true,
         isBanned: false,
-    }, {
-        id: 2,
-        username: "user2",
-        password: "pass2",
-        email: "email2",
-        score: 0,
-        isAdmin: false,
-        isBanned: false,
     }],
     newUser: {
         id: 3,
@@ -42,9 +34,7 @@ const initialState = {
         score: 0,
         isAdmin: true,
         isBanned: false,
-    },
-
-    currentIndex: 3
+    }
 };
 const client = new RestClient("user1", "pass1");
 

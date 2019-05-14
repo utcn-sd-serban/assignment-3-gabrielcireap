@@ -2,8 +2,7 @@ import { ADD_VOTE } from "./voteActionTypes";
 import { UPDATE_VOTE } from "./voteActionTypes";
 
 const initialState = {
-    votes: [],
-    currentIndex: 1
+    votes: []
 };
 
 function voteReducer(state = initialState, action) {

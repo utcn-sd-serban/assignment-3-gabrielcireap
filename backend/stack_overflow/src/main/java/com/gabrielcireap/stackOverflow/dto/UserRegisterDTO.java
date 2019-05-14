@@ -23,4 +23,14 @@ public class UserRegisterDTO {
         userRegisterDTO.setIsBanned(user.getIsBanned());
         return userRegisterDTO;
     }
+
+    public static User newEntity(UserRegisterDTO userRegisterDTO){
+        User user = new User();
+        user.setUsername(userRegisterDTO.getUsername());
+        user.setPassword(userRegisterDTO.getPassword());
+        user.setScore(userRegisterDTO.getScore());
+        user.setIsBanned(userRegisterDTO.getIsBanned());
+        user.setIsAdmin(userRegisterDTO.getIsAdmin());
+        return user;
+    }
 }

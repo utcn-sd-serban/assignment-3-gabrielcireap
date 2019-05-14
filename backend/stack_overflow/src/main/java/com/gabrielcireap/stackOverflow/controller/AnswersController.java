@@ -12,7 +12,7 @@ import java.util.List;
 public class AnswersController {
     private final AnswerManagementService answerManagementService;
 
-    @GetMapping("questions/{id}")
+    @GetMapping("questions/{id}/answers")
     public List<AnswerDTO> findByQuestion(@PathVariable int id) {
         return answerManagementService.findByQuestion(id);
     }
@@ -24,10 +24,7 @@ public class AnswersController {
 
     @PutMapping("/answers")
     public AnswerDTO editAnswer(@RequestBody AnswerDTO answerDTO){
-        System.out.println(answerDTO);
-        AnswerDTO dto =  answerManagementService.save(answerDTO);
-        System.out.println(dto);
-        return dto;
+        return answerManagementService.save(answerDTO);
     }
 
     @DeleteMapping("/answers/{id}")

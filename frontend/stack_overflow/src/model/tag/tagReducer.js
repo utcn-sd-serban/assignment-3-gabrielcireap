@@ -1,7 +1,7 @@
 import { ADD_TAG } from "./tagActionTypes";
 
 const initialState = {
-    tags: ["tag1", "react", "js"],
+    tags: [],
     newTag: "node"
 };
 

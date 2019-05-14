@@ -46,15 +46,7 @@ public class UserManagementService {
 
     @Transactional
     public UserShowDTO save(UserRegisterDTO userDTO) {
-        User user = new User();
-        user.setUsername(userDTO.getUsername());
-        user.setPassword(userDTO.getPassword());
-        user.setEmail(userDTO.getEmail());
-        user.setScore(userDTO.getScore());
-        user.setIsAdmin(userDTO.getIsAdmin());
-        user.setIsBanned(userDTO.getIsBanned());
-        user.setId(repositoryFactory.createUserRepository().save(user).getId());
-        return UserShowDTO.ofEntity(user);
+        return UserShowDTO.ofEntity(repositoryFactory.createUserRepository().save(UserRegisterDTO.newEntity(userDTO)));
     }
 
     @Transactional

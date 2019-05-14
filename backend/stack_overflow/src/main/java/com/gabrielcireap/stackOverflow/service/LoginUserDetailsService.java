@@ -10,17 +10,16 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class LoginUserDetailsService implements UserDetailsService {
 
-    private final RepositoryFactory repositoryFactoryk;
+    private final RepositoryFactory repositoryFactory;
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        User user = repositoryFactoryk.createUserRepository().findUserByUsername(s)
+        User user = repositoryFactory.createUserRepository().findUserByUsername(s)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found!"));
         String role = user.getIsAdmin() == true ? "ROLE_ADMIN" : "ROLE_USER";
         return new org.springframework.security.core.userdetails.User(

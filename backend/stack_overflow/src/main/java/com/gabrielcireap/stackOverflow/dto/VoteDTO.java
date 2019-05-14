@@ -22,4 +22,14 @@ public class VoteDTO {
 
         return voteDTO;
     }
+
+    public static Vote newEntity(VoteDTO voteDTO){
+        Vote vote = new Vote();
+        vote.setUser(UserShowDTO.newEntity(voteDTO.getUser()));
+        vote.setAnswer(voteDTO.getAnswer() == null ? null : AnswerDTO.newEntity(voteDTO.getAnswer()));
+        vote.setQuestion(voteDTO.getQuestion() == null ? null : QuestionDTO.newEntity(voteDTO.getQuestion()));
+        vote.setIs_upvote(voteDTO.getIsUpvote());
+        vote.setId(voteDTO.getId());
+        return vote;
+    }
 }

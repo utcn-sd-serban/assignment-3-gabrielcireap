@@ -7,6 +7,7 @@ export function getNewQuestion() {
 
 export function findById(id) {
     let questions = store.getState().questionState.questions;
+    debugger;
     return questions.filter(question => question.id == id)[0];
 }
 

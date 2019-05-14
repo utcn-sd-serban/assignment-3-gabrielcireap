@@ -1,11 +1,8 @@
 package com.gabrielcireap.stackOverflow.service;
 
-import com.gabrielcireap.stackOverflow.dto.AnswerDTO;
 import com.gabrielcireap.stackOverflow.dto.QuestionDTO;
-import com.gabrielcireap.stackOverflow.entity.Answer;
 import com.gabrielcireap.stackOverflow.entity.Question;
 import com.gabrielcireap.stackOverflow.entity.Tag;
-import com.gabrielcireap.stackOverflow.entity.User;
 import com.gabrielcireap.stackOverflow.exception.NotEnoughPermissionsException;
 import com.gabrielcireap.stackOverflow.exception.QuestionNotFoundException;
 import com.gabrielcireap.stackOverflow.exception.TagNotFoundException;
@@ -16,9 +13,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,15 +31,9 @@ public class QuestionManagementService {
         return questions;
     }
 
-    @Transactional
-    public Map<QuestionDTO, List<AnswerDTO>> findById(int id) {
+    public QuestionDTO findById(int id) {
         //userManagementService.checkIfUserIsLogged();
-        Question question = repositoryFactory.createQuestionRepository().findById(id).orElseThrow(QuestionNotFoundException::new);
-        List<Answer> answers = repositoryFactory.createAnswerRepository().findByQuestion(question);
-        answers.sort((a1, a2) -> a1.getVoteCount() > a2.getVoteCount() ? -1 : 1);
-        Map<QuestionDTO, List<AnswerDTO>> map = new HashMap<>();
-        map.put(QuestionDTO.ofEntity(question), answers.stream().map(AnswerDTO::ofEntity).collect(Collectors.toList()));
-        return map;
+        return QuestionDTO.ofEntity(repositoryFactory.createQuestionRepository().findById(id).orElseThrow(QuestionNotFoundException::new));
     }
 
     @Transactional
@@ -61,24 +50,7 @@ public class QuestionManagementService {
 
     @Transactional
     public QuestionDTO save(QuestionDTO questionDTO) {
-        Question question = new Question();
-        question.setTitle(questionDTO.getTitle());
-        question.setText(questionDTO.getText());
-        question.setVoteCount(questionDTO.getVoteCount());
-        question.setCreationDate(questionDTO.getCreationDate());
-
-        User user = new User();
-        user.setId(questionDTO.getUser().getId());
-        user.setUsername(questionDTO.getUser().getUsername());
-        user.setScore(questionDTO.getUser().getScore());
-        user.setIsAdmin(questionDTO.getUser().getIsAdmin());
-        user.setIsBanned(questionDTO.getUser().getIsBanned());
-        question.setUser(user);
-
-        question.setId(repositoryFactory.createQuestionRepository().save(question).getId());
-        QuestionDTO dto =  QuestionDTO.ofEntity(question);
-        System.out.println(dto);
-        return dto;
+        return QuestionDTO.ofEntity(repositoryFactory.createQuestionRepository().save(QuestionDTO.newEntity(questionDTO)));
     }
 
     @Transactional
@@ -122,13 +94,12 @@ public class QuestionManagementService {
     public List<QuestionDTO> findQuestionByTag(String tag) {
 
         //userManagementService.checkIfUserIsLogged();
-        //tag = tag.split("\n")[0];
         Tag t = repositoryFactory.createTagRepository().findByName(tag).orElseThrow(TagNotFoundException::new);
         List<Question> questions = repositoryFactory.createQuestionRepository().findByTag(t);
         questions.sort((q1, q2) -> {
             return q1.getCreationDate().after(q2.getCreationDate()) ? -1 : 1;
         });
-        List<QuestionDTO> dto =  questions.stream().map(QuestionDTO::ofEntity).collect(Collectors.toList());
+        List<QuestionDTO> dto = questions.stream().map(QuestionDTO::ofEntity).collect(Collectors.toList());
         System.out.println(dto);
         return dto;
     }

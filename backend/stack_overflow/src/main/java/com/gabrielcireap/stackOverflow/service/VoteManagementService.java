@@ -1,9 +1,6 @@
 package com.gabrielcireap.stackOverflow.service;
 
 import com.gabrielcireap.stackOverflow.dto.*;
-import com.gabrielcireap.stackOverflow.entity.Answer;
-import com.gabrielcireap.stackOverflow.entity.Question;
-import com.gabrielcireap.stackOverflow.entity.User;
 import com.gabrielcireap.stackOverflow.entity.Vote;
 import com.gabrielcireap.stackOverflow.exception.DownvoteDuplicateException;
 import com.gabrielcireap.stackOverflow.exception.UpvoteDuplicateException;
@@ -26,28 +23,7 @@ public class VoteManagementService {
 
     @Transactional
     public VoteDTO save(VoteDTO voteDTO) {
-        Vote vote = new Vote();
-        Answer answer;
-        Question question;
-        User user;
-
-        vote.setIs_upvote(voteDTO.getIsUpvote());
-        if (voteDTO.getAnswer() == null) {
-            answer = null;
-            question = new Question();
-            question.setId(voteDTO.getQuestion().getId());
-        } else {
-            answer = new Answer();
-            answer.setId(voteDTO.getAnswer().getId());
-            question = null;
-        }
-        user = new User();
-        user.setId(vote.getUser().getId());
-
-        vote.setUser(user);
-        vote.setQuestion(question);
-        vote.setAnswer(answer);
-        return VoteDTO.ofEntity(repositoryFactory.createVoteRepository().save(vote));
+        return VoteDTO.ofEntity(repositoryFactory.createVoteRepository().save(VoteDTO.newEntity(voteDTO)));
     }
 
     @Transactional
@@ -68,7 +44,7 @@ public class VoteManagementService {
 
     @Transactional
     public void upvoteAnswer(int answerId) {
-        userManagementService.checkIfUserIsLogged();
+        //userManagementService.checkIfUserIsLogged();
         AnswerDTO answerDTO = answerManagementService.findById(answerId);
         if (answerDTO.getUser().equals(userManagementService.getLoggedUser())) {
             throw new VoteYourOwnException();
@@ -111,7 +87,7 @@ public class VoteManagementService {
 
     @Transactional
     public void downvoteAnswer(int answerId) {
-        userManagementService.checkIfUserIsLogged();
+        //userManagementService.checkIfUserIsLogged();
         AnswerDTO answerDTO = answerManagementService.findById(answerId);
         if (answerDTO.getUser().equals(userManagementService.getLoggedUser())) {
             throw new VoteYourOwnException();
@@ -157,8 +133,9 @@ public class VoteManagementService {
 
     @Transactional
     public void upvoteQuestion(int questionId) {
-        userManagementService.checkIfUserIsLogged();
-        QuestionDTO questionDTO = (QuestionDTO) questionManagementService.findById(questionId).keySet().toArray()[0];
+        //userManagementService.checkIfUserIsLogged();
+        //QuestionDTO questionDTO = (QuestionDTO) questionManagementService.findById(questionId).keySet().toArray()[0];
+        QuestionDTO questionDTO = questionManagementService.findById(questionId);
         if (questionDTO.getUser().equals(userManagementService.getLoggedUser())) {
             throw new VoteYourOwnException();
         }
@@ -197,8 +174,9 @@ public class VoteManagementService {
 
     @Transactional
     public void downvoteQuestion(int questionId) {
-        userManagementService.checkIfUserIsLogged();
-        QuestionDTO questionDTO = (QuestionDTO) questionManagementService.findById(questionId).keySet().toArray()[0];
+        //userManagementService.checkIfUserIsLogged();
+        //QuestionDTO questionDTO = (QuestionDTO) questionManagementService.findById(questionId).keySet().toArray()[0];
+        QuestionDTO questionDTO = questionManagementService.findById(questionId);
         if (questionDTO.getUser().equals(userManagementService.getLoggedUser())) {
             throw new VoteYourOwnException();
         }

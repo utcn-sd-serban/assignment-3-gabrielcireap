@@ -27,10 +27,10 @@ const AnswersTable = ({ answers, onEditAnswer, onDeleteAnswer, onUpvoteAnswer, o
                             <td className="has-text-centered"> {answer.text} </td>
                             <td className="has-text-centered"> {answer.creationDate} </td>
                             <td className="has-text-centered"> {answer.voteCount} </td>
-                            <td><button class="button is-link" onClick={() => onEditAnswer(answer.id)}> Edit </button></td>
-                            <td><button class="button is-warning" onClick={() => onDeleteAnswer(answer.id)}> Delete </button></td>
-                            <td><button class="button is-success" onClick={() => onUpvoteAnswer(answer.id)}> Upvote </button></td>
-                            <td><button class="button is-danger" onClick={() => onDownvoteAnswer(answer.id)}> Downvote </button></td>
+                            <td><button className="button is-link" onClick={() => onEditAnswer(answer.id)}> Edit </button></td>
+                            <td><button className="button is-warning" onClick={() => onDeleteAnswer(answer.id)}> Delete </button></td>
+                            <td><button className="button is-success" onClick={() => onUpvoteAnswer(answer.id)}> Upvote </button></td>
+                            <td><button className="button is-danger" onClick={() => onDownvoteAnswer(answer.id)}> Downvote </button></td>
                         </tr>
                     ))
                 }

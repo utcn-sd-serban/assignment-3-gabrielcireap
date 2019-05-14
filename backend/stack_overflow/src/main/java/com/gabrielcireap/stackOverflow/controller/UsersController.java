@@ -24,8 +24,9 @@ public class UsersController {
         return userManagementService.listUsers();
     }
 
-    @PostMapping("/")
+    @PostMapping("/users")
     public UserShowDTO create(@RequestBody UserRegisterDTO userDTO) {
+        userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         return userManagementService.save(userDTO);
     }
 
@@ -34,10 +35,4 @@ public class UsersController {
         userRegisterDTO.setPassword(passwordEncoder.encode(userRegisterDTO.getPassword()));
         return userManagementService.login(userRegisterDTO);
     }
-
-    /*@PostMapping("/login")
-    public UserShowDTO register(@RequestBody UserRegisterDTO userRegisterDTO) {
-        return userManagementService.save(userRegisterDTO);
-    }
-    */
 }

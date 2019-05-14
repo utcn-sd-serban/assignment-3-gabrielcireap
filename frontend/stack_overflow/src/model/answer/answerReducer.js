@@ -16,8 +16,7 @@ const initialState = {
         creationDate: "",
         voteCount: ""
     },
-    answersByQuestion: [],
-    currentIndex: 4
+    answersByQuestion: []
 };
 
 function answerReducer(state = initialState, action) {

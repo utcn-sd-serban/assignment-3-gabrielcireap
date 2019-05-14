@@ -8,8 +8,7 @@ import { UPVOTE_QUESTION } from "./questionActionTypes";
 import { DOWNVOTE_QUESTION } from "./questionActionTypes";
 import { LOAD_QUESTIONS } from "./questionActionTypes";
 
-const initialState = {
-    questions: [{
+/**{
         id: 1,
         user: {
             id: 1,
@@ -57,7 +56,10 @@ const initialState = {
         creationDate: new Date(Date.now()).toLocaleDateString(),
         voteCount: 0,
         tags: ["js", "react"]
-    }],
+    } */
+
+const initialState = {
+    questions: [],
 
     newQuestion: {
         id: "",
@@ -69,8 +71,7 @@ const initialState = {
         tags: []
     },
 
-    searchedQuestions: [],
-    currentIndex: 4
+    searchedQuestions: []
 };
 
 function questionReducer(state = initialState, action) {
@@ -101,8 +102,7 @@ function questionReducer(state = initialState, action) {
 function addQuestion(state, payload) {
     let newState = {
         ...state,
-        questions: state.questions.concat([payload.question]),
-        currentIndex: state.currentIndex + 1
+        questions: state.questions.concat([payload.question])
     };
 
     return newState;

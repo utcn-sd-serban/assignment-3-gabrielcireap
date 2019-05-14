@@ -1,15 +1,14 @@
 import * as questionSelectors from "../model/question/questionSelectors";
 import * as questionActions from "../model/question/questionActions";
-import * as voteActions from "../model/vote/voteActions";
-import * as voteSelectors from "../model/vote/voteSelectors";
 import * as tagSelectors from "../model/tag/tagSelectors";
 import * as tagActions from "../model/tag/tagActions";
-import { updateScore } from "../model/user/userActions";
 import * as userSelectors from "../model/user/userSelectors";
 
 import store from "../model/store/store";
-import RestClient from "../rest/QuestionRestClient";
-const client = new RestClient("user1", "pass1");
+import QuestionRestClient from "../rest/QuestionRestClient";
+import VoteRestClient from "../rest/VoteRestClient";
+const questionClient = new QuestionRestClient("user1", "pass1");
+const voteClient = new VoteRestClient("user1", "pass1");
 
 class QuestionTablePresenter {
     
@@ -26,8 +25,7 @@ class QuestionTablePresenter {
             tags.forEach(tag => questionTags.push(tag));
         }
 
-        client.addQuestion(userSelectors.getLoggedUser(), newQuestion.title, newQuestion.text, 0, questionTags).then(question => {
-            console.log(question);
+        questionClient.addQuestion(userSelectors.getLoggedUser(), newQuestion.title, newQuestion.text, 0, questionTags).then(question => {
             store.dispatch(questionActions.addQuestion(question));
         });
         
@@ -77,72 +75,18 @@ class QuestionTablePresenter {
     }
 
     onUpvoteQuestion(questionId) {
-        let currentQuestion = questionSelectors.findById(questionId);
-        let loggedUser = userSelectors.getLoggedUser();
-
-        if (currentQuestion.user.username === loggedUser.username && currentQuestion.user.password === loggedUser.password) {
-            window.alert("Cannot vote your own question!");
-        } else {
-            let currentVote = voteSelectors.findByQuestionId(currentQuestion.id, loggedUser.id);
-            if (currentVote.length > 0) {
-
-                if (currentVote[0].isUpvote === true) {
-                    window.alert("You cannot vote twice!");
-                } else {
-                    currentVote[0].isUpvote = true;
-                    store.dispatch(voteActions.update(currentVote[0]));
-                    store.dispatch(updateScore(currentQuestion.user, 7));
-                    store.dispatch(questionActions.upvote(currentQuestion, 2));
-                }
-
-            } else {
-                let action = voteActions.addVote(currentQuestion, undefined, loggedUser, true);
-                store.dispatch(action);
-                store.dispatch(updateScore(currentQuestion.user, 5));
-                store.dispatch(questionActions.upvote(currentQuestion, 1));
-            }
-        }
+        voteClient.upvoteQuestion(questionId);
     }
 
     onDownvoteQuestion(questionId) {
-        let currentQuestion = questionSelectors.findById(questionId);
-        let loggedUser = userSelectors.getLoggedUser();
-
-        if (currentQuestion.user.username === loggedUser.username && currentQuestion.user.password === loggedUser.password) {
-            window.alert("Cannot vote your own question!");
-        } else {
-            let currentVote = voteSelectors.findByQuestionId(currentQuestion.id, loggedUser.id);
-            if (currentVote.length > 0) {
-
-                if (currentVote[0].isUpvote === false) {
-                    window.alert("You cannot vote twice!");
-                } else {
-                    currentVote[0].isUpvote = false;
-                    store.dispatch(voteActions.update(currentVote[0]));
-                    store.dispatch(updateScore(currentQuestion.user, -7));
-                    store.dispatch(questionActions.downvote(currentQuestion, 2));
-                }
-
-            } else {
-                store.dispatch(voteActions.addVote(currentQuestion, undefined, loggedUser, false));
-                store.dispatch(updateScore(currentQuestion.user, -2));
-                store.dispatch(questionActions.downvote(currentQuestion, 1));
-            }
-        }
+        voteClient.downvoteQuestion(questionId);
     }
 
     onInit() {
-        client.loadQuestions().then(questions => {
+        questionClient.loadQuestions().then(questions => {
             store.dispatch(questionActions.loadQuestions(questions));
         });
     }
-}
-
-function createTag(tag) {
-    return {
-        id: "",
-        name: tag
-    };
 }
 
 const questionTablePresenter = new QuestionTablePresenter();

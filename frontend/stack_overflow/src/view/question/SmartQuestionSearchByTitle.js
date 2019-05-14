@@ -26,6 +26,10 @@ class SmartQuestionsSearchByTitle extends Component {
         super();
     }
 
+    componentDidUpdate() {
+        QuestionSearchPresenter.onInit();
+    }
+
     render() {
         return (
 

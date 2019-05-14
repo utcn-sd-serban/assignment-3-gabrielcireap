@@ -56,11 +56,11 @@ export default class AnswerRestClient {
             headers: {
                 "Authorization": this.authorization
             }
-        }).then(response => response.json());
+        });
     }
 
     findByQuestion(questionId) {
-        return fetch(BASE_URL + "/questions/" + questionId, {
+        return fetch(BASE_URL + "/questions/" + questionId + "/answers", {
             method: "GET",
             headers: {
                 "Authorization": this.authorization,

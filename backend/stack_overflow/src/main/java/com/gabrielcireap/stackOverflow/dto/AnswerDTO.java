@@ -26,4 +26,16 @@ public class AnswerDTO {
 
         return answerDTO;
     }
+
+    public static Answer newEntity(AnswerDTO answerDTO){
+        Answer answer = new Answer();
+        answer.setId(answerDTO.getId());
+        answer.setText(answerDTO.getText());
+        answer.setVoteCount(answerDTO.getVoteCount());
+        answer.setCreationDate(answerDTO.getCreationDate());
+        answer.setUser(UserShowDTO.newEntity(answerDTO.getUser()));
+        answer.setQuestion(QuestionDTO.newEntity(answerDTO.getQuestion()));
+
+        return answer;
+    }
 }

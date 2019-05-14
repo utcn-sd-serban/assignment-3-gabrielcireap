@@ -4,11 +4,12 @@
     "\\src",
     "\\src\\model",
     "\\src\\model\\answer",
+    "\\src\\model\\question",
     "\\src\\presenter",
-    "\\src\\rest",
     "\\src\\view",
-    "\\src\\view\\answer"
+    "\\src\\view\\answer",
+    "\\src\\view\\question"
   ],
-  "SelectedNode": "\\src\\model\\answer\\answerReducer.js",
+  "SelectedNode": "\\src\\presenter\\QuestionsTablePresenter.js",
   "PreviewInSolutionExplorer": false
 }
