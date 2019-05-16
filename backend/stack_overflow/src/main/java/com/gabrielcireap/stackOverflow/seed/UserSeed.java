@@ -25,9 +25,8 @@ public class UserSeed implements CommandLineRunner {
         UserRepository userRepository = repositoryFactory.createUserRepository();
         if(userRepository.findAll().isEmpty()){
             userRepository.save(new User(null, "user1", passwordEncoder.encode("pass1"), "email1", 0, true, false));
-            userRepository.save(new User("user2", "pass2", "email2"));
-            userRepository.save(new User("user3", "pass3", "email3"));
-            userRepository.save(new User("user4", "pass4", "email4"));
+            userRepository.save(new User("user2", passwordEncoder.encode("pass2"), "email2"));
+            userRepository.save(new User("user3", passwordEncoder.encode("pass3"), "email3"));
         }
     }
 }

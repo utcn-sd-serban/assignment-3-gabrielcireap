@@ -8,59 +8,8 @@ import { UPVOTE_QUESTION } from "./questionActionTypes";
 import { DOWNVOTE_QUESTION } from "./questionActionTypes";
 import { LOAD_QUESTIONS } from "./questionActionTypes";
 
-/**{
-        id: 1,
-        user: {
-            id: 1,
-            username: "user1",
-            password: "pass1",
-            email: "email1",
-            score: 0,
-            isAdmin: true,
-            isBanned: false,
-        },
-        title: "title1",
-        text: "text1",
-        creationDate: new Date(Date.now()).toLocaleDateString(),
-        voteCount: 0,
-        tags: ["tag1"]
-    }, {
-        id: 2,
-        user: {
-            id: 1,
-            username: "user1",
-            password: "pass1",
-            email: "email1",
-            score: 0,
-            isAdmin: true,
-            isBanned: false,
-        },
-        title: "ceva titlu",
-        text: "ceva text",
-        creationDate: new Date(Date.now()).toLocaleDateString(),
-        voteCount: 0,
-        tags: ["tag", "react"]
-    }, {
-        id: 3,
-        user: {
-            id: 1,
-            username: "user1",
-            password: "pass1",
-            email: "email1",
-            score: 0,
-            isAdmin: true,
-            isBanned: false,
-        },
-        title: "title 2",
-        text: "question 3 text",
-        creationDate: new Date(Date.now()).toLocaleDateString(),
-        voteCount: 0,
-        tags: ["js", "react"]
-    } */
-
 const initialState = {
     questions: [],
-
     newQuestion: {
         id: "",
         user: "",
@@ -70,7 +19,6 @@ const initialState = {
         voteCount: "",
         tags: []
     },
-
     searchedQuestions: []
 };
 

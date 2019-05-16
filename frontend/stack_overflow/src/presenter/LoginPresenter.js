@@ -1,24 +1,18 @@
 import store from "../model/store/store";
 import * as userActions from "../model/user/userActions";
 import * as userSelectors from "../model/user/userSelectors";
+import UserRestClient from "../rest/UserRestClient";
+const userClient = new UserRestClient("user1", "pass1");
 
 class LoginPresenter {
 
     onLogin() {
 
-        let newUser = userSelectors.getNewUser();
-        let currentUser = userSelectors.login(newUser.username, newUser.password);
-        console.log("current user = " + currentUser);
-        if (currentUser.length > 0) {
-            if (currentUser[0].isBanned === true) {
-                window.alert("User has been banned!");
-            } else {
-                store.dispatch(userActions.logUser(currentUser[0]));
+        let newUser = userSelectors.getNewUser();       
+        userClient.login(newUser.username, newUser.password).then(user => {
+                store.dispatch(userActions.logUser(user));
                 window.location.assign("#/index");
-            }
-        } else {
-            window.alert("Account does not exist!");
-        }
+        });
         
         store.dispatch(userActions.changeNewUserProperty("username", ""));
         store.dispatch(userActions.changeNewUserProperty("password", ""));
@@ -28,12 +22,9 @@ class LoginPresenter {
     onRegister() {
 
         let newUser = userSelectors.getNewUser();
-        let currentUser = userSelectors .login(newUser.username, newUser.password);
-        if (currentUser.length > 0) {
-            window.alert("User already exists!");
-        } else {
-            store.dispatch(userActions.addUser(newUser.username, newUser.password, newUser.email, 0, false, false));
-        }
+        userClient.register(newUser.username, newUser.password, newUser.email).then(user => {
+            store.dispatch(userActions.addUser(user));
+        });
         
         store.dispatch(userActions.changeNewUserProperty("username", ""));
         store.dispatch(userActions.changeNewUserProperty("password", ""));

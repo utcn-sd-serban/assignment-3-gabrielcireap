@@ -1,7 +1,7 @@
 import React from "react";
 
 const QuestionsTable = ({ questions, onAnswer, onDeleteQuestion, onUpvoteQuestion, onDownvoteQuestion, userToString, tagToString }) => (
-    <div>
+    <div className="container is-fluid">
         <table className="table" border="1">
             <thead>
                 <tr>

@@ -4,18 +4,17 @@ import { UPDATE_SCORE } from "./userActionTypes";
 import { BAN } from "./userActionTypes";
 import { LOG_USER } from "./userActionTypes";
 import { LOAD_USERS } from "./userActionTypes";
-import RestClient from "../../rest/UserRestClient";
-const client = new RestClient("user1", "pass1");
 
-export function addUser(username, password, email, score, isAdmin, isBanned) {
+export function addUser(user) {
 
     let payload = {
-        username,
-        password,
-        email,
-        score,
-        isAdmin,
-        isBanned
+        id: user.id,
+        username: user.username,
+        password: user.password,
+        email: user.email,
+        score: user.score,
+        isAdmin: user.isAdmin,
+        isBanned: user.isBanned
     };
 
     return {
@@ -59,11 +58,6 @@ export function ban(user) {
 }
 
 export function logUser(user) {
-    /*let payload = client.getLoggedUser(user.username, user.password).then(user => {
-        payload = user;
-        return payload;
-    });*/
-
     let payload = {
         user
     }
@@ -74,9 +68,11 @@ export function logUser(user) {
     };
 }
 
-export function loadUsers() {
+export function loadUsers(users) {
     return {
         type: LOAD_USERS,
-        payload: []
+        payload: {
+            users
+        }
     };
 }

@@ -1,7 +1,7 @@
 import React from "react";
 
 const QuestionSearchByTitle = ({ title, onChange, onSearch }) => (
-    <div>
+    <div className="container is-fluid">
         <div className="column is-one-quarter">
             <label class="label"> Title </label>
             <input value={title} onChange={e => onChange("title", e.target.value)} class="input" type="text" placeholder="Text input" />

@@ -1,7 +1,7 @@
 import React from "react";
 
 const QuestionsInput = ({ title, text, tags, onChange, onCreate, onEditQuestion }) => (
-    <div className="container" className="has-background-light">
+    <div className="container is-fluid" className="has-background-light">
 
         <div className="column is-one-quarter">
             <label className="label"> Title </label>

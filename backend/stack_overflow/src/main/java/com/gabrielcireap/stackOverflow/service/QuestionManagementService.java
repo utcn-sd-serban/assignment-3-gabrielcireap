@@ -25,23 +25,20 @@ public class QuestionManagementService {
 
     @Transactional
     public List<QuestionDTO> listQuestions() {
-        //userManagementService.checkIfUserIsLogged();
-        List<QuestionDTO> questions = repositoryFactory.createQuestionRepository().findAll().stream().map(QuestionDTO::ofEntity).collect(Collectors.toList());
+        List<Question> questions = repositoryFactory.createQuestionRepository().findAll();
         questions.sort((q1, q2) -> q1.getCreationDate().after(q2.getCreationDate()) ? -1 : 1);
-        return questions;
+        return questions.stream().map(QuestionDTO::ofEntity).collect(Collectors.toList());
     }
 
     public QuestionDTO findById(int id) {
-        //userManagementService.checkIfUserIsLogged();
         return QuestionDTO.ofEntity(repositoryFactory.createQuestionRepository().findById(id).orElseThrow(QuestionNotFoundException::new));
     }
 
     @Transactional
     public QuestionDTO save(String title, String text, List<String> tagList) {
-        //userManagementService.checkIfUserIsLogged();
         List<Tag> tags = stringToTags(tagList);
-        List<Tag> allTags = repositoryFactory.createTagRepository().findAll();
-        tags.stream().filter(tag -> !allTags.contains(tag)).forEach(tag -> repositoryFactory.createTagRepository().save(tag));
+        List<String> allTagNames = repositoryFactory.createTagRepository().findAll().stream().map(Tag::getName).collect(Collectors.toList());
+        tags.stream().filter(tag -> !allTagNames.contains(tag.getName())).forEach(tag -> repositoryFactory.createTagRepository().save(tag));
 
         return QuestionDTO.ofEntity(repositoryFactory.createQuestionRepository()
                 .save(new Question(null, userManagementService.getLoggedUser(),
@@ -50,63 +47,53 @@ public class QuestionManagementService {
 
     @Transactional
     public QuestionDTO save(QuestionDTO questionDTO) {
-        return QuestionDTO.ofEntity(repositoryFactory.createQuestionRepository().save(QuestionDTO.newEntity(questionDTO)));
+        Question question = repositoryFactory.createQuestionRepository().findById(questionDTO.getId()).orElseThrow(QuestionNotFoundException::new);
+        question.setText(questionDTO.getText());
+        question.setTitle(questionDTO.getTitle());
+        question.setVoteCount(questionDTO.getVoteCount());
+        return QuestionDTO.ofEntity(repositoryFactory.createQuestionRepository().save(question));
     }
 
     @Transactional
     public void remove(int questionId) {
-
-        userManagementService.checkIfUserIsLogged();
         if (!userManagementService.getLoggedUser().getIsAdmin()) {
             throw new NotEnoughPermissionsException();
         }
-
         Question question = repositoryFactory.createQuestionRepository().findById(questionId).orElseThrow(QuestionNotFoundException::new);
         repositoryFactory.createQuestionRepository().remove(question);
     }
 
-    /*@Transactional
-    public void edit(int questionId, String title, String text){
-        userManagementService.checkIfUserIsLogged();
-        if(!userManagementService.getLoggedUser().getIsAdmin()){
+    @Transactional
+    public QuestionDTO edit(int questionId, String title, String text) {
+        if (!userManagementService.getLoggedUser().getIsAdmin()) {
             throw new NotEnoughPermissionsException();
         }
-
-        Question question = (Question) findById(questionId).keySet().toArray()[0];
+        Question question = repositoryFactory.createQuestionRepository().findById(questionId).orElseThrow(QuestionNotFoundException::new);
         question.setTitle(title);
         question.setText(text);
-        save(question);
-    }*/
+        return save(QuestionDTO.ofEntity(question));
+    }
 
     @Transactional
     public List<QuestionDTO> findQuestionByTitle(String text) {
-
-        //userManagementService.checkIfUserIsLogged();
         List<Question> questions = repositoryFactory.createQuestionRepository().findByTitle(text);
-        questions.sort((q1, q2) -> {
-            return q1.getCreationDate().after(q2.getCreationDate()) ? -1 : 1;
-        });
+        questions.sort((q1, q2) -> q1.getCreationDate().after(q2.getCreationDate()) ? -1 : 1);
         System.out.println(questions);
         return questions.stream().map(QuestionDTO::ofEntity).collect(Collectors.toList());
     }
 
     @Transactional
     public List<QuestionDTO> findQuestionByTag(String tag) {
-
-        //userManagementService.checkIfUserIsLogged();
         Tag t = repositoryFactory.createTagRepository().findByName(tag).orElseThrow(TagNotFoundException::new);
         List<Question> questions = repositoryFactory.createQuestionRepository().findByTag(t);
-        questions.sort((q1, q2) -> {
-            return q1.getCreationDate().after(q2.getCreationDate()) ? -1 : 1;
-        });
+        questions.sort((q1, q2) -> q1.getCreationDate().after(q2.getCreationDate()) ? -1 : 1);
         List<QuestionDTO> dto = questions.stream().map(QuestionDTO::ofEntity).collect(Collectors.toList());
         System.out.println(dto);
         return dto;
     }
 
     private List<Tag> stringToTags(List<String> tag) {
-        List<Tag> tags = new ArrayList<Tag>();
-
+        List<Tag> tags = new ArrayList<>();
         tag.forEach(t -> tags.add(new Tag(null, t.toLowerCase().trim())));
         return tags;
     }

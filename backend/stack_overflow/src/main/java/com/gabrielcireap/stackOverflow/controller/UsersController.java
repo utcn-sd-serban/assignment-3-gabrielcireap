@@ -5,10 +5,7 @@ import com.gabrielcireap.stackOverflow.dto.UserShowDTO;
 import com.gabrielcireap.stackOverflow.service.UserManagementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,12 +24,16 @@ public class UsersController {
     @PostMapping("/users")
     public UserShowDTO create(@RequestBody UserRegisterDTO userDTO) {
         userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        return userManagementService.save(userDTO);
+        return userManagementService.save(userDTO.getUsername(), userDTO.getPassword(), userDTO.getEmail());
     }
 
-    @PostMapping("/login")
-    public UserShowDTO login(@RequestBody UserRegisterDTO userRegisterDTO) {
-        userRegisterDTO.setPassword(passwordEncoder.encode(userRegisterDTO.getPassword()));
-        return userManagementService.login(userRegisterDTO);
+    @GetMapping("/users/ban/{id}")
+    public UserShowDTO ban(@PathVariable int id){
+        return userManagementService.ban(id);
+    }
+
+    @GetMapping("/login")
+    public UserShowDTO login(){
+        return UserShowDTO.ofEntity(userManagementService.getLoggedUser());
     }
 }

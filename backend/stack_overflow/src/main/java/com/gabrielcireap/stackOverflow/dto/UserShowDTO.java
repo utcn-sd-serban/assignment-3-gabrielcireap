@@ -25,12 +25,11 @@ public class UserShowDTO {
 
     public static User newEntity(UserShowDTO userShowDTO){
         User user = new User();
+        user.setId(userShowDTO.getId());
         user.setUsername(userShowDTO.getUsername());
         user.setIsAdmin(userShowDTO.getIsAdmin());
         user.setIsBanned(userShowDTO.getIsBanned());
         user.setScore(userShowDTO.getScore());
-        user.setId(userShowDTO.getId());
-
         return user;
     }
 }

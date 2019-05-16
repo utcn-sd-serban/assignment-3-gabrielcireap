@@ -43,31 +43,17 @@ class QuestionTablePresenter {
     }
 
     onDeleteQuestion(id) {
-        let loggedUser = userSelectors.getLoggedUser();
-
-        if (loggedUser.isAdmin === true) {
-            let selectedQuestion = questionSelectors.findById(id);
-            store.dispatch(questionActions.deleteQuestion(selectedQuestion));
-        } else {
-            window.alert("Only admins can delete questions!");
-        }
+        let selectedQuestion = questionSelectors.findById(id);
+        questionClient.deleteQuestion(selectedQuestion.id);
+        store.dispatch(questionActions.deleteQuestion(selectedQuestion));
     }
 
     onEditQuestion() {
 
-        let loggedUser = userSelectors.getLoggedUser();
-        if (loggedUser.isAdmin === true) {
-            let newQuestionFromState = questionSelectors.getNewQuestion();
-            let newQuestion = {
-                id: newQuestionFromState.tags,
-                title: newQuestionFromState.title,
-                text: newQuestionFromState.text
-            };
-
-            store.dispatch(questionActions.edit(newQuestion));
-        } else {
-            window.alert("Only admins can edit questions!");
-        }
+        let newQuestion = questionSelectors.getNewQuestion();
+        questionClient.editQuestion(newQuestion.tags, newQuestion.title, newQuestion.text).then(question => {
+            store.dispatch(questionActions.edit(question));
+        });
         
         store.dispatch(questionActions.changeNewQuestionProperty("title", ""));
         store.dispatch(questionActions.changeNewQuestionProperty("text", ""));

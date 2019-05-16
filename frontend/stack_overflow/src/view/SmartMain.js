@@ -29,9 +29,9 @@ class SmartMain extends Component {
         super();
     }
 
-    //componentDidMount() {
-    //    MainPresenter.onInit();
-    //}
+    componentDidMount() {
+        MainPresenter.onInit();
+    }
 
     render() {
         return (

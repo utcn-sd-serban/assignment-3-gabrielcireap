@@ -19,6 +19,7 @@ public class AnswersController {
 
     @PostMapping("/answers")
     public AnswerDTO addAnswer(@RequestBody AnswerDTO answerDTO){
+        System.out.println(answerDTO);
         return answerManagementService.save(answerDTO.getQuestion().getId(), answerDTO.getText());
     }
 

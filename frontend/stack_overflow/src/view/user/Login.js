@@ -1,7 +1,7 @@
 import React from "react";
 
 const Login = ({ username, password, email, onChange, onLogin, onRegister }) => (
-    <div>
+    <div className="container is-fluid">
 
         <div className="field" className="column is-one-quarter">
             <label className="label">Username</label>

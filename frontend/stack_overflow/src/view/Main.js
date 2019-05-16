@@ -3,7 +3,7 @@ import QuestionsTable from "./question/QuestionsTable";
 import UsersTable from "./user/UsersTable";
 
 const Main = ({ questions, users, loggedUser, onAskQuestion, onSearchQuestionTitle, onSearchQuestionTag, onAnswer, onDeleteQuestion, onUpvoteQuestion, onDownvoteQuestion, onBan, userToString, tagToString }) => (
-    <div className="container" className="has-background-light">
+    <div  className="has-background-light">
         <h1 className="title">
             Assignment 2
         </h1>

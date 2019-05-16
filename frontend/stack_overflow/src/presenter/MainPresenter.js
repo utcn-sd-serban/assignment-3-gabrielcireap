@@ -1,7 +1,12 @@
 import QuestionsTablePresenter from "./QuestionsTablePresenter";
 import * as userSelectors from "../model/user/userSelectors";
 import * as userActions from "../model/user/userActions";
+import * as questionActions from "../model/question/questionActions";
 import store from "../model/store/store";
+import QuestionRestClient from "../rest/QuestionRestClient";
+import UserRestClient from "../rest/UserRestClient";
+const questionClient = new QuestionRestClient("user1", "pass1");
+const userClient = new UserRestClient("user1", "pass1");
 
 class MainPresenter {
 
@@ -34,12 +39,19 @@ class MainPresenter {
     }
 
     onBan(userId) {
-        let selectedUser = userSelectors.findById(userId);
-        store.dispatch(userActions.ban(selectedUser));
+        userClient.ban(userId).then(user => {
+            store.dispatch(userActions.ban(user));
+        });
     }
 
     onInit() {
-        store.dispatch(userActions.loadUsers());
+        questionClient.loadQuestions().then(questions => {
+            store.dispatch(questionActions.loadQuestions(questions));
+        });
+
+        userClient.loadUsers().then(users => {
+            store.dispatch(userActions.loadUsers(users));
+        });
     }
 }
 

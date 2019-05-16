@@ -24,12 +24,14 @@ public class AnswerManagementService {
 
     @Transactional
     public AnswerDTO save(AnswerDTO answerDTO) {
-        return AnswerDTO.ofEntity(repositoryFactory.createAnswerRepository().save(AnswerDTO.newEntity(answerDTO)));
+        Answer answer = repositoryFactory.createAnswerRepository().findById(answerDTO.getId()).orElseThrow(AnswerNotFoundException::new);
+        answer.setText(answerDTO.getText());
+        answer.setVoteCount(answerDTO.getVoteCount());
+        return AnswerDTO.ofEntity(repositoryFactory.createAnswerRepository().save(answer));
     }
 
     @Transactional
     public AnswerDTO save(int questionId, String text) {
-        userManagementService.checkIfUserIsLogged();
         Question question = repositoryFactory.createQuestionRepository().findById(questionId).orElseThrow(QuestionNotFoundException::new);
         return AnswerDTO.ofEntity(repositoryFactory.createAnswerRepository()
                 .save(new Answer(
@@ -38,24 +40,11 @@ public class AnswerManagementService {
 
     @Transactional
     public void remove(int id) {
-        userManagementService.checkIfUserIsLogged();
         AnswerDTO answerDTO = findById(id);
         Answer answer = new Answer();
         answer.setId(answerDTO.getId());
         if (answerDTO.getUser().equals(userManagementService.getLoggedUser()) || userManagementService.getLoggedUser().getIsAdmin()) {
             repositoryFactory.createAnswerRepository().remove(answer);
-        } else {
-            throw new NotEnoughPermissionsException();
-        }
-    }
-
-    @Transactional
-    public void edit(int id, String text) {
-        userManagementService.checkIfUserIsLogged();
-        AnswerDTO answerDTO = findById(id);
-        if (answerDTO.getUser().equals(userManagementService.getLoggedUser()) || userManagementService.getLoggedUser().getIsAdmin()) {
-            answerDTO.setText(text);
-            save(answerDTO);
         } else {
             throw new NotEnoughPermissionsException();
         }

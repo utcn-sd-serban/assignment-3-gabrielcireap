@@ -1,6 +1,9 @@
 package com.gabrielcireap.stackOverflow.service;
 
-import com.gabrielcireap.stackOverflow.dto.*;
+import com.gabrielcireap.stackOverflow.dto.AnswerDTO;
+import com.gabrielcireap.stackOverflow.dto.QuestionDTO;
+import com.gabrielcireap.stackOverflow.dto.UserShowDTO;
+import com.gabrielcireap.stackOverflow.dto.VoteDTO;
 import com.gabrielcireap.stackOverflow.entity.Vote;
 import com.gabrielcireap.stackOverflow.exception.DownvoteDuplicateException;
 import com.gabrielcireap.stackOverflow.exception.UpvoteDuplicateException;
@@ -44,7 +47,6 @@ public class VoteManagementService {
 
     @Transactional
     public void upvoteAnswer(int answerId) {
-        //userManagementService.checkIfUserIsLogged();
         AnswerDTO answerDTO = answerManagementService.findById(answerId);
         if (answerDTO.getUser().equals(userManagementService.getLoggedUser())) {
             throw new VoteYourOwnException();
@@ -56,16 +58,13 @@ public class VoteManagementService {
                 throw new UpvoteDuplicateException();
             } else {
                 voteDTO.setIsUpvote(true);
-                save(voteDTO);
-
                 answerDTO.setVoteCount(answerDTO.getVoteCount() + 2);
-                answerManagementService.save(answerDTO);
-
                 answerDTO.getUser().setScore(answerDTO.getUser().getScore() + 12);
+                answerManagementService.save(answerDTO);
                 userManagementService.save(answerDTO.getUser());
-
                 userManagementService.getLoggedUser().setScore(userManagementService.getLoggedUser().getScore() + 1);
-                userManagementService.save(UserRegisterDTO.ofEntity(userManagementService.getLoggedUser()));
+                userManagementService.save(UserShowDTO.ofEntity(userManagementService.getLoggedUser()));
+                save(voteDTO);
             }
 
         } catch (VoteNotFoundException voteNotFoundException) {
@@ -75,19 +74,16 @@ public class VoteManagementService {
             voteDTO.setAnswer(answerDTO);
             voteDTO.setUser(UserShowDTO.ofEntity(userManagementService.getLoggedUser()));
             voteDTO.setIsUpvote(true);
-            save(voteDTO);
-
             answerDTO.setVoteCount(answerDTO.getVoteCount() + 1);
-            answerManagementService.save(answerDTO);
-
             answerDTO.getUser().setScore(answerDTO.getUser().getScore() + 10);
+            answerManagementService.save(answerDTO);
             userManagementService.save(answerDTO.getUser());
+            save(voteDTO);
         }
     }
 
     @Transactional
     public void downvoteAnswer(int answerId) {
-        //userManagementService.checkIfUserIsLogged();
         AnswerDTO answerDTO = answerManagementService.findById(answerId);
         if (answerDTO.getUser().equals(userManagementService.getLoggedUser())) {
             throw new VoteYourOwnException();
@@ -99,16 +95,13 @@ public class VoteManagementService {
                 throw new DownvoteDuplicateException();
             } else {
                 voteDTO.setIsUpvote(false);
-                save(voteDTO);
-
                 answerDTO.setVoteCount(answerDTO.getVoteCount() - 2);
                 answerManagementService.save(answerDTO);
-
                 answerDTO.getUser().setScore(answerDTO.getUser().getScore() - 12);
                 userManagementService.save(answerDTO.getUser());
-
                 userManagementService.getLoggedUser().setScore(userManagementService.getLoggedUser().getScore() - 1);
-                userManagementService.save(UserRegisterDTO.ofEntity(userManagementService.getLoggedUser()));
+                userManagementService.save(UserShowDTO.ofEntity(userManagementService.getLoggedUser()));
+                save(voteDTO);
             }
 
         } catch (VoteNotFoundException voteNotFoundException) {
@@ -118,23 +111,18 @@ public class VoteManagementService {
             voteDTO.setAnswer(answerDTO);
             voteDTO.setUser(UserShowDTO.ofEntity(userManagementService.getLoggedUser()));
             voteDTO.setIsUpvote(false);
-            save(voteDTO);
-
             answerDTO.setVoteCount(answerDTO.getVoteCount() - 1);
-            answerManagementService.save(answerDTO);
-
             answerDTO.getUser().setScore(answerDTO.getUser().getScore() - 2);
+            answerManagementService.save(answerDTO);
             userManagementService.save(answerDTO.getUser());
-
             userManagementService.getLoggedUser().setScore(userManagementService.getLoggedUser().getScore() - 1);
-            userManagementService.save(UserRegisterDTO.ofEntity(userManagementService.getLoggedUser()));
+            userManagementService.save(UserShowDTO.ofEntity(userManagementService.getLoggedUser()));
+            save(voteDTO);
         }
     }
 
     @Transactional
     public void upvoteQuestion(int questionId) {
-        //userManagementService.checkIfUserIsLogged();
-        //QuestionDTO questionDTO = (QuestionDTO) questionManagementService.findById(questionId).keySet().toArray()[0];
         QuestionDTO questionDTO = questionManagementService.findById(questionId);
         if (questionDTO.getUser().equals(userManagementService.getLoggedUser())) {
             throw new VoteYourOwnException();
@@ -146,13 +134,11 @@ public class VoteManagementService {
                 throw new UpvoteDuplicateException();
             } else {
                 voteDTO.setIsUpvote(true);
-                save(voteDTO);
-
                 questionDTO.setVoteCount(questionDTO.getVoteCount() + 2);
                 questionManagementService.save(questionDTO);
-
                 questionDTO.getUser().setScore(questionDTO.getUser().getScore() + 7);
                 userManagementService.save(questionDTO.getUser());
+                save(voteDTO);
             }
 
         } catch (VoteNotFoundException voteNotFoundException) {
@@ -162,20 +148,16 @@ public class VoteManagementService {
             voteDTO.setAnswer(null);
             voteDTO.setUser(UserShowDTO.ofEntity(userManagementService.getLoggedUser()));
             voteDTO.setIsUpvote(true);
-            save(voteDTO);
-
-            questionDTO.setVoteCount(questionDTO.getVoteCount() + 1);
-            questionManagementService.save(questionDTO);
-
             questionDTO.getUser().setScore(questionDTO.getUser().getScore() + 5);
+            questionDTO.setVoteCount(questionDTO.getVoteCount() + 1);
             userManagementService.save(questionDTO.getUser());
+            questionManagementService.save(questionDTO);
+            save(voteDTO);
         }
     }
 
     @Transactional
     public void downvoteQuestion(int questionId) {
-        //userManagementService.checkIfUserIsLogged();
-        //QuestionDTO questionDTO = (QuestionDTO) questionManagementService.findById(questionId).keySet().toArray()[0];
         QuestionDTO questionDTO = questionManagementService.findById(questionId);
         if (questionDTO.getUser().equals(userManagementService.getLoggedUser())) {
             throw new VoteYourOwnException();
@@ -187,13 +169,11 @@ public class VoteManagementService {
                 throw new DownvoteDuplicateException();
             } else {
                 voteDTO.setIsUpvote(true);
-                save(voteDTO);
-
                 questionDTO.setVoteCount(questionDTO.getVoteCount() - 2);
                 questionManagementService.save(questionDTO);
-
                 questionDTO.getUser().setScore(questionDTO.getUser().getScore() - 7);
                 userManagementService.save(questionDTO.getUser());
+                save(voteDTO);
             }
 
         } catch (VoteNotFoundException voteNotFoundException) {
@@ -203,13 +183,12 @@ public class VoteManagementService {
             voteDTO.setAnswer(null);
             voteDTO.setUser(UserShowDTO.ofEntity(userManagementService.getLoggedUser()));
             voteDTO.setIsUpvote(false);
-            save(voteDTO);
 
             questionDTO.setVoteCount(questionDTO.getVoteCount() - 1);
-            questionManagementService.save(questionDTO);
-
             questionDTO.getUser().setScore(questionDTO.getUser().getScore() - 2);
+            questionManagementService.save(questionDTO);
             userManagementService.save(questionDTO.getUser());
+            save(voteDTO);
         }
     }
 }

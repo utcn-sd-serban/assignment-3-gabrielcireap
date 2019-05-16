@@ -7,8 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -18,16 +16,10 @@ public class TagManagementService {
     private final UserManagementService userManagementService;
 
     @Transactional
-    public TagDTO save(TagDTO tagDTO){
+    public TagDTO save(TagDTO tagDTO) {
         Tag tag = new Tag();
         tag.setName(tagDTO.getName());
         tag.setId(repositoryFactory.createTagRepository().save(tag).getId());
         return TagDTO.ofEntity(tag);
-    }
-
-    @Transactional
-    public List<TagDTO> listTags(){
-        userManagementService.checkIfUserIsLogged();
-        return repositoryFactory.createTagRepository().findAll().stream().map(TagDTO::ofEntity).collect(Collectors.toList());
     }
 }

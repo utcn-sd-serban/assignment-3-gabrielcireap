@@ -9,7 +9,20 @@ export default class RestClient {
         return fetch(BASE_URL + "/users", {
             method: "GET",
             headers: {
-                "Authorization": this.authorization
+                "Authorization": this.authorization,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => response.json());
+    }
+
+    ban(id) {
+        return fetch(BASE_URL + "/users/ban/" + id, {
+            method: "GET",
+            headers: {
+                "Authorization": this.authorization,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
             }
         }).then(response => response.json());
     }
@@ -32,6 +45,36 @@ export default class RestClient {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(userRegisterDTO)
+        }).then(response => response.json());
+    }
+
+    register(username, password, email) {
+        let userRegisterDTO = {
+            username,
+            password,
+            email,
+            score: 0,
+            isAdmin: false,
+            isBanned: false
+        }
+
+        return fetch(BASE_URL + "/users", {
+            method: "POST",
+            headers: {
+                "Authorization": this.authorization,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(userRegisterDTO)
+        }).then(response => response.json());
+    }
+
+    login(username, password) {
+        return fetch(BASE_URL + "/login", {
+            method: "GET",
+            headers: {
+                "Authorization": "Basic " + btoa(username + ":" + password)
+            }
         }).then(response => response.json());
     }
 }

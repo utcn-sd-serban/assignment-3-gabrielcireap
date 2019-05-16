@@ -65,4 +65,41 @@ export default class QuestionRestClient {
             }
         }).then(response => response.json());
     }
+
+    deleteQuestion(id) {
+        return fetch(BASE_URL + "/questions/" + id, {
+            method: "GET",
+            headers: {
+                "Authorization": this.authorization
+            }
+        });
+    }
+
+    editQuestion(id, title, text) {
+        let questionDTO = {
+            id,
+            user: {
+                id: "",
+                username: "",
+                score: "",
+                isAdmin: "",
+                isBanned: ""
+            },
+            title,
+            text,
+            creationDate: null,
+            voteCount: "",
+            tags: []
+        };
+
+        return fetch(BASE_URL + "/questions/" + questionDTO.id, {
+            method: "PUT",
+            headers: {
+                "Authorization": this.authorization,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(questionDTO)
+        }).then(response => response.json());
+    }
 }
