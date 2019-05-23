@@ -58,16 +58,22 @@ public class JdbcAnswerRepository implements AnswerRepository {
     }
 
     @Override
-    public List<Answer> findByQuestion(Question question) {
+    public List<Answer> findAll() {
+        List<Answer> answers = template.query("SELECT * FROM answer WHERE id = ?", new AnswerMapper());
 
-        List<User> users = template.query("SELECT user.id, user.username, user.password, user.email, user.score, user.is_admin, user.is_banned " +
-                "FROM user JOIN answer ON answer.user_id = user.id WHERE answer.question_id = ?", new UserMapper(), question.getId());
+        for(Answer answer: answers){
+            List<User> users = template.query("SELECT user.id, user.username, user.password, user.email, user.score, user.is_admin, user.is_banned " +
+                    "FROM user JOIN answer ON answer.user_id = user.id WHERE answer.id = ?", new UserMapper(), answer.getId());
 
-        List<Answer> answers = template.query("SELECT * FROM answer WHERE question_id = ?", new AnswerMapper(), question.getId());
-        for(int i=0; i<answers.size(); i++){
-            answers.get(i).setUser(users.get(i));
+            List<Question> questions = template.query("SELECT " +
+                    "question.id, user.id as \"user_id\", user.username, user.password, user.email, user.score, user.is_admin, user.is_banned, " +
+                    "question.title, question.text, question.creation_date, question.vote_count " +
+                    "FROM question JOIN user ON question.user_id = user.id " +
+                    "JOIN answer ON answer.question_id = question.id WHERE answer.id = ?", new QuestionMapper(), answer.getId());
+
+            answer.setUser(users.get(0));
+            answer.setQuestion(questions.get(0));
         }
-
         return answers;
     }
 

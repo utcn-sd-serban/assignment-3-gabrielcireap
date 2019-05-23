@@ -7,11 +7,23 @@ const userClient = new UserRestClient("user1", "pass1");
 class LoginPresenter {
 
     onLogin() {
-
-        let newUser = userSelectors.getNewUser();       
+        var newUser = userSelectors.getNewUser();
         userClient.login(newUser.username, newUser.password).then(user => {
-                store.dispatch(userActions.logUser(user));
+            if (user.type !== undefined) {
+                window.alert(user.type);
+            } else {
+                let logUser = {
+                    id: user.id,
+                    username: newUser.username,
+                    password: newUser.password,
+                    isAdmin: user.isAdmin,
+                    isBanned: user.isBanned,
+                    score: user.score
+                }
+
+                store.dispatch(userActions.logUser(logUser));
                 window.location.assign("#/index");
+            }
         });
         
         store.dispatch(userActions.changeNewUserProperty("username", ""));
@@ -20,10 +32,11 @@ class LoginPresenter {
     }
 
     onRegister() {
-
         let newUser = userSelectors.getNewUser();
-        userClient.register(newUser.username, newUser.password, newUser.email).then(user => {
-            store.dispatch(userActions.addUser(user));
+        userClient.register(newUser.username, newUser.password, newUser.email).then(status => {
+            if (status >= 300) {
+                window.alert("User already registered!");
+            }
         });
         
         store.dispatch(userActions.changeNewUserProperty("username", ""));

@@ -2,9 +2,8 @@ import { ADD_ANSWER } from "./answerActionTypes.js";
 import { CHANGE_NEW_ANSWER_PROPERTIES } from "./answerActionTypes.js";
 import { DELETE_ANSWER } from "./answerActionTypes.js";
 import { EDIT_ANSWER } from "./answerActionTypes.js";
-import { UPVOTE_ANSWER } from "./answerActionTypes.js";
-import { DOWNVOTE_ANSWER } from "./answerActionTypes.js";
 import { FIND_ANSWERS_BY_QUESTION } from "./answerActionTypes";
+import { LOAD_ANSWERS } from "./answerActionTypes";
 
 export function addAnswer(answer) {
 
@@ -55,35 +54,18 @@ export function editAnswer(answer) {
     };
 }
 
-export function upvote(answer, count) {
-
-    let payload = {
-        answer,
-        count
-    };
-
-    return {
-        type: UPVOTE_ANSWER,
-        payload
-    };
-}
-
-export function downvote(answer, count) {
-
-    let payload = {
-        answer,
-        count
-    };
-
-    return {
-        type: DOWNVOTE_ANSWER,
-        payload
-    };
-}
-
 export function findByQuestion(answers) {
     return {
         type: FIND_ANSWERS_BY_QUESTION,
+        payload: {
+            answers
+        }
+    };
+}
+
+export function loadAnswers(answers) {
+    return {
+        type: LOAD_ANSWERS,
         payload: {
             answers
         }

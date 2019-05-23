@@ -68,11 +68,11 @@ export default class QuestionRestClient {
 
     deleteQuestion(id) {
         return fetch(BASE_URL + "/questions/" + id, {
-            method: "GET",
+            method: "DELETE",
             headers: {
                 "Authorization": this.authorization
             }
-        });
+        }).then(response => response.status);
     }
 
     editQuestion(id, title, text) {

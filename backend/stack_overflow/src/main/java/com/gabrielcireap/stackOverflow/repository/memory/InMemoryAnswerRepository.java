@@ -4,6 +4,7 @@ import com.gabrielcireap.stackOverflow.entity.Answer;
 import com.gabrielcireap.stackOverflow.entity.Question;
 import com.gabrielcireap.stackOverflow.repository.AnswerRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -36,7 +37,7 @@ public class InMemoryAnswerRepository implements AnswerRepository {
     }
 
     @Override
-    public List<Answer> findByQuestion(Question question) {
-        return data.values().stream().filter(answer -> answer.getQuestion().getId() == question.getId()).collect(Collectors.toList());
+    public List<Answer> findAll() {
+        return new ArrayList<>(data.values());
     }
 }

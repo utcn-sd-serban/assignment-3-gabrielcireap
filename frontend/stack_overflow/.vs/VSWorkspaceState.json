@@ -3,14 +3,14 @@
     "",
     "\\src",
     "\\src\\model",
+    "\\src\\model\\answer",
     "\\src\\model\\question",
     "\\src\\model\\user",
     "\\src\\presenter",
     "\\src\\rest",
     "\\src\\view",
-    "\\src\\view\\question",
-    "\\src\\view\\user"
+    "\\src\\view\\question"
   ],
-  "SelectedNode": "\\src\\model\\user\\userReducer.js",
+  "SelectedNode": "\\src\\view",
   "PreviewInSolutionExplorer": false
 }

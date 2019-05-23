@@ -2,8 +2,7 @@ import { ADD_QUESTION } from "./questionActionTypes.js";
 import { CHANGE_NEW_QUESTION_PROPERTIES } from "./questionActionTypes.js";
 import { DELETE_QUESTION } from "./questionActionTypes.js";
 import { EDIT_QUESTION } from "./questionActionTypes.js";
-import { SEARCH_BY_TITLE } from "./questionActionTypes.js";
-import { SEARCH_BY_TAG } from "./questionActionTypes.js";
+import { SEARCH_QUESTION } from "./questionActionTypes.js";
 import { UPVOTE_QUESTION } from "./questionActionTypes.js";
 import { DOWNVOTE_QUESTION } from "./questionActionTypes.js";
 import { LOAD_QUESTIONS } from "./questionActionTypes";
@@ -49,7 +48,7 @@ export function edit(question){
 
 	let payload = {
 		question
-	};
+    };
 
 	return {
         type: EDIT_QUESTION,
@@ -57,53 +56,14 @@ export function edit(question){
 	};
 }
 
-export function searchByTitle(questions){
+export function search(questions){
 
 	let payload = {
 		questions
 	};
 
 	return {
-		type: SEARCH_BY_TITLE,
-		payload
-	};
-}
-
-export function searchByTag(questions){
-
-	let payload = {
-		questions
-	};
-
-	return {
-		type: SEARCH_BY_TAG,
-		payload
-	};
-}
-
-export function upvote(question, count){
-
-	let payload = {
-		question,
-		count
-	};
-
-	return {
-        type: UPVOTE_QUESTION,
-		payload
-	};
-}
-
-export function downvote(question, count, score){
-
-	let payload = {
-		question, 
-		count, 
-		score
-	};
-
-	return {
-        type: DOWNVOTE_QUESTION,
+        type: SEARCH_QUESTION,
 		payload
 	};
 }

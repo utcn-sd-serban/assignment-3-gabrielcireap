@@ -11,7 +11,7 @@ export default class VoteRestClient {
             headers: {
                 "Authorization": this.authorization
             }
-        });
+        }).then(response => response.status);
     }
 
     downvoteQuestion(id) {
@@ -20,7 +20,7 @@ export default class VoteRestClient {
             headers: {
                 "Authorization": this.authorization
             }
-        });
+        }).then(response => response.status);
     }
 
     upvoteAnswer(id) {
@@ -29,7 +29,7 @@ export default class VoteRestClient {
             headers: {
                 "Authorization": this.authorization
             }
-        });
+        }).then(response => response.status);
     }
 
     downvoteAnswer(id) {
@@ -38,6 +38,6 @@ export default class VoteRestClient {
             headers: {
                 "Authorization": this.authorization
             }
-        });
+        }).then(response => response.status);
     }
 }

@@ -7,8 +7,6 @@ import * as userSelectors from "../model/user/userSelectors";
 import store from "../model/store/store";
 import QuestionRestClient from "../rest/QuestionRestClient";
 import VoteRestClient from "../rest/VoteRestClient";
-const questionClient = new QuestionRestClient("user1", "pass1");
-const voteClient = new VoteRestClient("user1", "pass1");
 
 class QuestionTablePresenter {
     
@@ -25,8 +23,12 @@ class QuestionTablePresenter {
             tags.forEach(tag => questionTags.push(tag));
         }
 
-        questionClient.addQuestion(userSelectors.getLoggedUser(), newQuestion.title, newQuestion.text, 0, questionTags).then(question => {
-            store.dispatch(questionActions.addQuestion(question));
+        let loggedUser = userSelectors.getLoggedUser();
+        let questionClient = new QuestionRestClient(loggedUser.username, loggedUser.password);
+        questionClient.addQuestion(userSelectors.getLoggedUser(), newQuestion.title, newQuestion.text, 0, questionTags).then(response => {
+            if (response.type !== undefined) {
+                window.alert(response.type);
+            }
         });
         
         store.dispatch(questionActions.changeNewQuestionProperty("title", ""));
@@ -43,16 +45,24 @@ class QuestionTablePresenter {
     }
 
     onDeleteQuestion(id) {
-        let selectedQuestion = questionSelectors.findById(id);
-        questionClient.deleteQuestion(selectedQuestion.id);
-        store.dispatch(questionActions.deleteQuestion(selectedQuestion));
+        let loggedUser = userSelectors.getLoggedUser();
+        let questionClient = new QuestionRestClient(loggedUser.username, loggedUser.password);
+        questionClient.deleteQuestion(id).then(status => {
+            if (status >= 300) {
+                window.alert("Cannot find question!");
+            }
+        });
     }
 
     onEditQuestion() {
 
+        let loggedUser = userSelectors.getLoggedUser();
+        let questionClient = new QuestionRestClient(loggedUser.username, loggedUser.password);
         let newQuestion = questionSelectors.getNewQuestion();
-        questionClient.editQuestion(newQuestion.tags, newQuestion.title, newQuestion.text).then(question => {
-            store.dispatch(questionActions.edit(question));
+        questionClient.editQuestion(newQuestion.tags, newQuestion.title, newQuestion.text).then(response => {
+            if (response.type !== undefined) {
+                window.alert(response.type);
+            }
         });
         
         store.dispatch(questionActions.changeNewQuestionProperty("title", ""));
@@ -61,17 +71,35 @@ class QuestionTablePresenter {
     }
 
     onUpvoteQuestion(questionId) {
-        voteClient.upvoteQuestion(questionId);
+        let loggedUser = userSelectors.getLoggedUser();
+        let voteClient = new VoteRestClient(loggedUser.username, loggedUser.password);
+        voteClient.upvoteQuestion(questionId).then(status => {
+            if (status === 403) {
+                window.alert("You cannot vote your own question");
+            } else if(status === 400) {
+                window.alert("You cannot upvote twice!");
+            }
+        });
     }
 
     onDownvoteQuestion(questionId) {
-        voteClient.downvoteQuestion(questionId);
+        let loggedUser = userSelectors.getLoggedUser();
+        let voteClient = new VoteRestClient(loggedUser.username, loggedUser.password);
+        voteClient.downvoteQuestion(questionId).then(status => {
+            if (status === 403) {
+                window.alert("You cannot vote your own question");
+            } else if (status === 400) {
+                window.alert("You cannot downvote twice!");
+            }
+        });
     }
 
     onInit() {
+        let loggedUser = userSelectors.getLoggedUser();
+        let questionClient = new QuestionRestClient(loggedUser.username, loggedUser.password);
         questionClient.loadQuestions().then(questions => {
             store.dispatch(questionActions.loadQuestions(questions));
-        });
+        });;
     }
 }
 

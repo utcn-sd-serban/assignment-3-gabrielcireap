@@ -4,13 +4,15 @@ import com.gabrielcireap.stackOverflow.dto.AnswerDTO;
 import com.gabrielcireap.stackOverflow.dto.QuestionDTO;
 import com.gabrielcireap.stackOverflow.dto.UserShowDTO;
 import com.gabrielcireap.stackOverflow.dto.VoteDTO;
+import com.gabrielcireap.stackOverflow.entity.Question;
 import com.gabrielcireap.stackOverflow.entity.Vote;
-import com.gabrielcireap.stackOverflow.exception.DownvoteDuplicateException;
-import com.gabrielcireap.stackOverflow.exception.UpvoteDuplicateException;
-import com.gabrielcireap.stackOverflow.exception.VoteNotFoundException;
-import com.gabrielcireap.stackOverflow.exception.VoteYourOwnException;
+import com.gabrielcireap.stackOverflow.event.AnswerUpdatedEvent;
+import com.gabrielcireap.stackOverflow.event.QuestionUpdatedEvent;
+import com.gabrielcireap.stackOverflow.event.UserUpdatedEvent;
+import com.gabrielcireap.stackOverflow.exception.*;
 import com.gabrielcireap.stackOverflow.repository.RepositoryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -23,6 +25,7 @@ public class VoteManagementService {
     private final UserManagementService userManagementService;
     private final AnswerManagementService answerManagementService;
     private final QuestionManagementService questionManagementService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public VoteDTO save(VoteDTO voteDTO) {
@@ -48,7 +51,7 @@ public class VoteManagementService {
     @Transactional
     public void upvoteAnswer(int answerId) {
         AnswerDTO answerDTO = answerManagementService.findById(answerId);
-        if (answerDTO.getUser().equals(userManagementService.getLoggedUser())) {
+        if (answerDTO.getUser().getUsername().equals(userManagementService.getLoggedUser().getUsername())) {
             throw new VoteYourOwnException();
         }
 
@@ -65,6 +68,10 @@ public class VoteManagementService {
                 userManagementService.getLoggedUser().setScore(userManagementService.getLoggedUser().getScore() + 1);
                 userManagementService.save(UserShowDTO.ofEntity(userManagementService.getLoggedUser()));
                 save(voteDTO);
+
+                eventPublisher.publishEvent(new AnswerUpdatedEvent(answerDTO));
+                eventPublisher.publishEvent(new UserUpdatedEvent(answerDTO.getUser()));
+                eventPublisher.publishEvent(new UserUpdatedEvent(UserShowDTO.ofEntity(userManagementService.getLoggedUser())));
             }
 
         } catch (VoteNotFoundException voteNotFoundException) {
@@ -79,13 +86,16 @@ public class VoteManagementService {
             answerManagementService.save(answerDTO);
             userManagementService.save(answerDTO.getUser());
             save(voteDTO);
+
+            eventPublisher.publishEvent(new AnswerUpdatedEvent(answerDTO));
+            eventPublisher.publishEvent(new UserUpdatedEvent(answerDTO.getUser()));
         }
     }
 
     @Transactional
     public void downvoteAnswer(int answerId) {
         AnswerDTO answerDTO = answerManagementService.findById(answerId);
-        if (answerDTO.getUser().equals(userManagementService.getLoggedUser())) {
+        if (answerDTO.getUser().getUsername().equals(userManagementService.getLoggedUser().getUsername())) {
             throw new VoteYourOwnException();
         }
 
@@ -102,6 +112,10 @@ public class VoteManagementService {
                 userManagementService.getLoggedUser().setScore(userManagementService.getLoggedUser().getScore() - 1);
                 userManagementService.save(UserShowDTO.ofEntity(userManagementService.getLoggedUser()));
                 save(voteDTO);
+
+                eventPublisher.publishEvent(new UserUpdatedEvent(answerDTO.getUser()));
+                eventPublisher.publishEvent(new UserUpdatedEvent(UserShowDTO.ofEntity(userManagementService.getLoggedUser())));
+                eventPublisher.publishEvent(new AnswerUpdatedEvent(answerDTO));
             }
 
         } catch (VoteNotFoundException voteNotFoundException) {
@@ -118,13 +132,18 @@ public class VoteManagementService {
             userManagementService.getLoggedUser().setScore(userManagementService.getLoggedUser().getScore() - 1);
             userManagementService.save(UserShowDTO.ofEntity(userManagementService.getLoggedUser()));
             save(voteDTO);
+
+            eventPublisher.publishEvent(new AnswerUpdatedEvent(answerDTO));
+            eventPublisher.publishEvent(new UserUpdatedEvent(answerDTO.getUser()));
+            eventPublisher.publishEvent(new UserUpdatedEvent(UserShowDTO.ofEntity(userManagementService.getLoggedUser())));
         }
     }
 
     @Transactional
     public void upvoteQuestion(int questionId) {
-        QuestionDTO questionDTO = questionManagementService.findById(questionId);
-        if (questionDTO.getUser().equals(userManagementService.getLoggedUser())) {
+        Question question = repositoryFactory.createQuestionRepository().findById(questionId).orElseThrow(QuestionNotFoundException::new);
+        QuestionDTO questionDTO = QuestionDTO.ofEntity(question);
+        if (question.getUser().getUsername().equals(userManagementService.getLoggedUser().getUsername())) {
             throw new VoteYourOwnException();
         }
 
@@ -135,10 +154,13 @@ public class VoteManagementService {
             } else {
                 voteDTO.setIsUpvote(true);
                 questionDTO.setVoteCount(questionDTO.getVoteCount() + 2);
-                questionManagementService.save(questionDTO);
                 questionDTO.getUser().setScore(questionDTO.getUser().getScore() + 7);
+                questionManagementService.save(questionDTO);
                 userManagementService.save(questionDTO.getUser());
                 save(voteDTO);
+
+                eventPublisher.publishEvent(new QuestionUpdatedEvent(questionDTO));
+                eventPublisher.publishEvent(new UserUpdatedEvent(questionDTO.getUser()));
             }
 
         } catch (VoteNotFoundException voteNotFoundException) {
@@ -153,27 +175,34 @@ public class VoteManagementService {
             userManagementService.save(questionDTO.getUser());
             questionManagementService.save(questionDTO);
             save(voteDTO);
+
+            eventPublisher.publishEvent(new UserUpdatedEvent(questionDTO.getUser()));
+            eventPublisher.publishEvent(new QuestionUpdatedEvent(questionDTO));
         }
     }
 
     @Transactional
     public void downvoteQuestion(int questionId) {
-        QuestionDTO questionDTO = questionManagementService.findById(questionId);
-        if (questionDTO.getUser().equals(userManagementService.getLoggedUser())) {
+        Question question = repositoryFactory.createQuestionRepository().findById(questionId).orElseThrow(QuestionNotFoundException::new);
+        QuestionDTO questionDTO = QuestionDTO.ofEntity(question);
+        if (question.getUser().getUsername().equals(userManagementService.getLoggedUser().getUsername())) {
             throw new VoteYourOwnException();
         }
 
         try {
             VoteDTO voteDTO = findByQuestionId(questionId, userManagementService.getLoggedUser().getId());
-            if (!voteDTO.getIsUpvote()) {
+            if (voteDTO.getIsUpvote() == false) {
                 throw new DownvoteDuplicateException();
             } else {
-                voteDTO.setIsUpvote(true);
+                voteDTO.setIsUpvote(false);
                 questionDTO.setVoteCount(questionDTO.getVoteCount() - 2);
                 questionManagementService.save(questionDTO);
                 questionDTO.getUser().setScore(questionDTO.getUser().getScore() - 7);
                 userManagementService.save(questionDTO.getUser());
                 save(voteDTO);
+
+                eventPublisher.publishEvent(new QuestionUpdatedEvent(questionDTO));
+                eventPublisher.publishEvent(new UserUpdatedEvent(questionDTO.getUser()));
             }
 
         } catch (VoteNotFoundException voteNotFoundException) {
@@ -189,6 +218,9 @@ public class VoteManagementService {
             questionManagementService.save(questionDTO);
             userManagementService.save(questionDTO.getUser());
             save(voteDTO);
+
+            eventPublisher.publishEvent(new QuestionUpdatedEvent(questionDTO));
+            eventPublisher.publishEvent(new UserUpdatedEvent(questionDTO.getUser()));
         }
     }
 }

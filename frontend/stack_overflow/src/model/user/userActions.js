@@ -1,7 +1,6 @@
 import { ADD_USER } from "./userActionTypes";
 import { CHANGE_NEW_USER_PROPERTY } from "./userActionTypes";
-import { UPDATE_SCORE } from "./userActionTypes";
-import { BAN } from "./userActionTypes";
+import { UPDATE_USER } from "./userActionTypes";
 import { LOG_USER } from "./userActionTypes";
 import { LOAD_USERS } from "./userActionTypes";
 
@@ -36,25 +35,15 @@ export function changeNewUserProperty(property, value) {
     }
 }
 
-export function updateScore(user, scores) {
-
+export function update(user) {
     let payload = {
-        user,
-        scores
+        user
+    }
+
+    return {
+        type: UPDATE_USER,
+        payload
     };
-
-    return {
-        type: UPDATE_SCORE,
-        payload: payload
-    }
-}
-
-export function ban(user) {
-    let payload = { user: user };
-    return {
-        type: BAN,
-        payload: payload
-    }
 }
 
 export function logUser(user) {

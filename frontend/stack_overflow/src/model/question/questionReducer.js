@@ -2,10 +2,7 @@ import { ADD_QUESTION } from "./questionActionTypes";
 import { CHANGE_NEW_QUESTION_PROPERTIES } from "./questionActionTypes";
 import { DELETE_QUESTION } from "./questionActionTypes";
 import { EDIT_QUESTION } from "./questionActionTypes";
-import { SEARCH_BY_TITLE } from "./questionActionTypes";
-import { SEARCH_BY_TAG } from "./questionActionTypes";
-import { UPVOTE_QUESTION } from "./questionActionTypes";
-import { DOWNVOTE_QUESTION } from "./questionActionTypes";
+import { SEARCH_QUESTION } from "./questionActionTypes";
 import { LOAD_QUESTIONS } from "./questionActionTypes";
 
 const initialState = {
@@ -33,14 +30,8 @@ function questionReducer(state = initialState, action) {
             return deleteQuestion(state, action.payload);
         case EDIT_QUESTION:
             return editQuestion(state, action.payload);
-        case SEARCH_BY_TITLE:
-            return searchByTitle(state, action.payload);
-        case SEARCH_BY_TAG:
-            return searchByTag(state, action.payload);
-        case UPVOTE_QUESTION:
-            return upvote(state, action.payload);
-        case DOWNVOTE_QUESTION:
-            return downvote(state, action.payload);
+        case SEARCH_QUESTION:
+            return search(state, action.payload);
         case LOAD_QUESTIONS:
             return loadQuestions(state, action.payload);
     }
@@ -69,7 +60,8 @@ function changeNewQuestionProperty(state, payload) {
 }
 
 function deleteQuestion(state, payload) {
-    let index = state.questions.indexOf(payload.question);
+    let oldQuestion = state.questions.filter(question => question.id == payload.question.id)[0];
+    let index = state.questions.indexOf(oldQuestion);
     let questions = state.questions.concat([]);
     questions.splice(index, 1);
 
@@ -82,16 +74,14 @@ function deleteQuestion(state, payload) {
 }
 
 function editQuestion(state, payload) {
-    console.log(state);
-    console.log(payload);
-    debugger;
     let oldQuestion = state.questions.filter(q => q.id == payload.question.id)[0];
     let index = state.questions.indexOf(oldQuestion);
     let questions = state.questions.concat([]);
     questions[index] = {
         ...state.questions[index],
         title: payload.question.title,
-        text: payload.question.text
+        text: payload.question.text,
+        voteCount: payload.question.voteCount
     };
 
     let newState = {
@@ -102,51 +92,10 @@ function editQuestion(state, payload) {
     return newState;
 }
 
-function searchByTitle(state, payload) {
+function search(state, payload) {
     let newState = {
         ...state,
         searchedQuestions: payload.questions
-    };
-
-    return newState;
-}
-
-function searchByTag(state, payload) {
-    let newState = {
-        ...state,
-        searchedQuestions: payload.questions
-    };
-
-    return newState;
-}
-
-function upvote(state, payload) {
-    let index = state.questions.indexOf(payload.question);
-    let questions = state.questions.concat([]);
-    questions[index] = {
-        ...questions[index],
-        voteCount: state.questions[index].voteCount + payload.count
-    };
-
-    let newState = {
-        ...state,
-        questions
-    };
-
-    return newState;
-}
-
-function downvote(state, payload) {
-    let index = state.questions.indexOf(payload.question);
-    let questions = state.questions.concat([]);
-    questions[index] = {
-        ...questions[index],
-        voteCount: state.questions[index].voteCount - payload.count
-    };
-
-    let newState = {
-        ...state,
-        questions
     };
 
     return newState;

@@ -20,11 +20,10 @@ public class LoginUserDetailsService implements UserDetailsService {
     private final UserManagementService userManagementService;
 
     @Override
-    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException, BannedUserException {
         User user = repositoryFactory.createUserRepository().findUserByUsername(s)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found!"));
 
-        if(user.getIsBanned()) { throw new BannedUserException(); }
         userManagementService.login(user);
         String role = user.getIsAdmin() == true ? "ROLE_ADMIN" : "ROLE_USER";
         return new org.springframework.security.core.userdetails.User(

@@ -3,11 +3,16 @@ package com.gabrielcireap.stackOverflow.service;
 import com.gabrielcireap.stackOverflow.dto.AnswerDTO;
 import com.gabrielcireap.stackOverflow.entity.Answer;
 import com.gabrielcireap.stackOverflow.entity.Question;
+import com.gabrielcireap.stackOverflow.event.AnswerCreatedEvent;
+import com.gabrielcireap.stackOverflow.event.AnswerDeletedEvent;
+import com.gabrielcireap.stackOverflow.event.AnswerUpdatedEvent;
+import com.gabrielcireap.stackOverflow.event.AnswersLoadedEvent;
 import com.gabrielcireap.stackOverflow.exception.AnswerNotFoundException;
 import com.gabrielcireap.stackOverflow.exception.NotEnoughPermissionsException;
 import com.gabrielcireap.stackOverflow.exception.QuestionNotFoundException;
 import com.gabrielcireap.stackOverflow.repository.RepositoryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -21,30 +26,35 @@ public class AnswerManagementService {
 
     private final RepositoryFactory repositoryFactory;
     private final UserManagementService userManagementService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public AnswerDTO save(AnswerDTO answerDTO) {
         Answer answer = repositoryFactory.createAnswerRepository().findById(answerDTO.getId()).orElseThrow(AnswerNotFoundException::new);
         answer.setText(answerDTO.getText());
         answer.setVoteCount(answerDTO.getVoteCount());
-        return AnswerDTO.ofEntity(repositoryFactory.createAnswerRepository().save(answer));
+        AnswerDTO savedAnswer =  AnswerDTO.ofEntity(repositoryFactory.createAnswerRepository().save(answer));
+        eventPublisher.publishEvent(new AnswerUpdatedEvent(savedAnswer));
+        return savedAnswer;
     }
 
     @Transactional
     public AnswerDTO save(int questionId, String text) {
         Question question = repositoryFactory.createQuestionRepository().findById(questionId).orElseThrow(QuestionNotFoundException::new);
-        return AnswerDTO.ofEntity(repositoryFactory.createAnswerRepository()
+        AnswerDTO answerDTO = AnswerDTO.ofEntity(repositoryFactory.createAnswerRepository()
                 .save(new Answer(
                         null, question, userManagementService.getLoggedUser(), text, new Timestamp(System.currentTimeMillis()), 0)));
+
+        eventPublisher.publishEvent(new AnswerCreatedEvent(answerDTO));
+        return answerDTO;
     }
 
     @Transactional
     public void remove(int id) {
-        AnswerDTO answerDTO = findById(id);
-        Answer answer = new Answer();
-        answer.setId(answerDTO.getId());
-        if (answerDTO.getUser().equals(userManagementService.getLoggedUser()) || userManagementService.getLoggedUser().getIsAdmin()) {
+        Answer answer = repositoryFactory.createAnswerRepository().findById(id).orElseThrow(AnswerNotFoundException::new);
+        if (answer.getUser().equals(userManagementService.getLoggedUser()) || userManagementService.getLoggedUser().getIsAdmin()) {
             repositoryFactory.createAnswerRepository().remove(answer);
+            eventPublisher.publishEvent(new AnswerDeletedEvent(AnswerDTO.ofEntity(answer)));
         } else {
             throw new NotEnoughPermissionsException();
         }
@@ -56,11 +66,11 @@ public class AnswerManagementService {
     }
 
     @Transactional
-    public List<AnswerDTO> findByQuestion(int id) {
-        Question question = new Question();
-        question.setId(id);
-        List<Answer> answers = repositoryFactory.createAnswerRepository().findByQuestion(question);
+    public List<AnswerDTO> findAll(){
+        List<Answer> answers = repositoryFactory.createAnswerRepository().findAll();
         answers.sort((a1, a2) -> a1.getVoteCount() > a2.getVoteCount() ? -1 : 1);
-        return answers.stream().map(AnswerDTO::ofEntity).collect(Collectors.toList());
+        List<AnswerDTO> answersList = answers.stream().map(AnswerDTO::ofEntity).collect(Collectors.toList());
+        eventPublisher.publishEvent(new AnswersLoadedEvent(answersList));
+        return answersList;
     }
 }

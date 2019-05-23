@@ -1,7 +1,6 @@
 import { ADD_USER } from "./userActionTypes";
 import { CHANGE_NEW_USER_PROPERTY } from "./userActionTypes";
-import { UPDATE_SCORE } from "./userActionTypes";
-import { BAN } from "./userActionTypes";
+import { UPDATE_USER } from "./userActionTypes";
 import { LOG_USER } from "./userActionTypes";
 import { LOAD_USERS } from "./userActionTypes";
 
@@ -20,11 +19,13 @@ const initialState = {
     loggedUser: {
         id: "",
         username: "",
+        password: "",
         isAdmin: "",
         isBanned: "",
         score: ""
     }
 };
+
 function userReducer(state = initialState, action) {
 
     switch (action.type) {
@@ -32,10 +33,8 @@ function userReducer(state = initialState, action) {
             return addUser(state, action.payload);
         case CHANGE_NEW_USER_PROPERTY:
             return changeNewUserProperty(state, action.payload);
-        case UPDATE_SCORE:
-            return updateScore(state, action.payload);
-        case BAN:
-            return ban(state, action.payload);
+        case UPDATE_USER:
+            return update(state, action.payload);
         case LOG_USER:
             return logUser(state, action.payload);
         case LOAD_USERS:
@@ -75,38 +74,25 @@ function changeNewUserProperty(state, payload) {
     return newState;
 }
 
-function updateScore(state, payload) {
-
-    let oldUser = state.users.filter(u => u.id == payload.user.id);
-    let index = state.users.indexOf(oldUser[0]);
-    let users = state.users.concat([]);
-
-    users[index] = {
-        ...state.users[index],
-        score: state.users[index].score + payload.scores
+function update(state, payload) {
+    let oldUser = state.users.filter(user => user.id == payload.user.id)[0];
+    let newUser = {
+        id: payload.user.id,
+        username: payload.user.username,
+        password: oldUser.password,
+        email: oldUser.email,
+        score: payload.user.score,
+        isAdmin: payload.user.isAdmin,
+        isBanned: payload.user.isBanned,
     };
 
+    let allUsers = state.users.concat([]);
+    allUsers[state.users.indexOf(oldUser)] = newUser;
     let newState = {
         ...state,
-        users: users
-    };
-    
-    return newState;
-}
-
-function ban(state, payload) {
-    let index = state.users.indexOf(payload.user);
-    let users = state.users.concat([]);
-
-    users[index] = {
-        ...state.users[index],
-        isBanned: true
-    };
-
-    let newState = {
-        ...state,
-        users: users
+        users: allUsers
     }
+
     return newState;
 }
 
@@ -116,6 +102,7 @@ function logUser(state, payload) {
         loggedUser: {
             id: payload.user.id,
             username: payload.user.username,
+            password: payload.user.password,
             isAdmin: payload.user.isAdmin,
             isBanned: payload.user.isBanned,
             score: payload.user.score

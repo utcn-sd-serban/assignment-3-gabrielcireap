@@ -38,7 +38,7 @@ public class QuestionsController {
         return questionManagementService.edit(questionDTO.getId(), questionDTO.getTitle(), questionDTO.getText());
     }
 
-    @GetMapping("/questions/{id}")
+    @DeleteMapping("/questions/{id}")
     public void delete(@PathVariable int id) {
         questionManagementService.remove(id);
     }

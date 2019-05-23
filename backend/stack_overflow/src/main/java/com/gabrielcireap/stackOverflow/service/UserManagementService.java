@@ -2,12 +2,16 @@ package com.gabrielcireap.stackOverflow.service;
 
 import com.gabrielcireap.stackOverflow.dto.UserShowDTO;
 import com.gabrielcireap.stackOverflow.entity.User;
+import com.gabrielcireap.stackOverflow.event.UserCreatedEvent;
+import com.gabrielcireap.stackOverflow.event.UserUpdatedEvent;
+import com.gabrielcireap.stackOverflow.event.UsersLoadedEvent;
 import com.gabrielcireap.stackOverflow.exception.DuplicateUserException;
 import com.gabrielcireap.stackOverflow.exception.NotEnoughPermissionsException;
 import com.gabrielcireap.stackOverflow.exception.UserNotFoundException;
 import com.gabrielcireap.stackOverflow.repository.RepositoryFactory;
 import com.gabrielcireap.stackOverflow.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -19,11 +23,14 @@ import java.util.stream.Collectors;
 public class UserManagementService {
 
     private final RepositoryFactory repositoryFactory;
+    private final ApplicationEventPublisher eventPublisher;
     private User currentUser;
 
     @Transactional
     public List<UserShowDTO> listUsers() {
-        return repositoryFactory.createUserRepository().findAll().stream().map(UserShowDTO::ofEntity).collect(Collectors.toList());
+        List<UserShowDTO> users = repositoryFactory.createUserRepository().findAll().stream().map(UserShowDTO::ofEntity).collect(Collectors.toList());
+        eventPublisher.publishEvent(new UsersLoadedEvent(users));
+        return users;
     }
 
     @Transactional
@@ -42,7 +49,10 @@ public class UserManagementService {
         if (!users.isEmpty()) {
             throw new DuplicateUserException();
         }
-        return UserShowDTO.ofEntity(repositoryFactory.createUserRepository().save(new User(username, password, email)));
+
+        UserShowDTO user = UserShowDTO.ofEntity(repositoryFactory.createUserRepository().save(new User(username, password, email)));
+        eventPublisher.publishEvent(new UserCreatedEvent(user));
+        return user;
     }
 
     @Transactional
@@ -51,7 +61,9 @@ public class UserManagementService {
         user.setScore(userDTO.getScore());
         user.setIsAdmin(userDTO.getIsAdmin());
         user.setIsBanned(userDTO.getIsBanned());
-        return UserShowDTO.ofEntity(repositoryFactory.createUserRepository().save(user));
+        UserShowDTO userShowDTO = UserShowDTO.ofEntity(repositoryFactory.createUserRepository().save(user));
+        eventPublisher.publishEvent(new UserUpdatedEvent(userShowDTO));
+        return userShowDTO;
     }
 
     @Transactional
@@ -77,6 +89,7 @@ public class UserManagementService {
         UserShowDTO user = findById(userId);
         user.setIsBanned(true);
         save(user);
+        eventPublisher.publishEvent(new UserUpdatedEvent(user));
         return user;
     }
 

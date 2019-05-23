@@ -5,8 +5,6 @@ import * as questionActions from "../model/question/questionActions";
 import store from "../model/store/store";
 import QuestionRestClient from "../rest/QuestionRestClient";
 import UserRestClient from "../rest/UserRestClient";
-const questionClient = new QuestionRestClient("user1", "pass1");
-const userClient = new UserRestClient("user1", "pass1");
 
 class MainPresenter {
 
@@ -39,12 +37,21 @@ class MainPresenter {
     }
 
     onBan(userId) {
-        userClient.ban(userId).then(user => {
-            store.dispatch(userActions.ban(user));
+        let loggedUser = userSelectors.getLoggedUser();
+        let userClient = new UserRestClient(loggedUser.username, loggedUser.password);
+        userClient.ban(userId).then(response => {
+            if (response.type !== undefined) {
+                window.alert(response.type);
+            }
         });
     }
 
     onInit() {
+
+        let loggedUser = userSelectors.getLoggedUser();
+        let userClient = new UserRestClient(loggedUser.username, loggedUser.password);
+        let questionClient = new QuestionRestClient(loggedUser.username, loggedUser.password);
+
         questionClient.loadQuestions().then(questions => {
             store.dispatch(questionActions.loadQuestions(questions));
         });
