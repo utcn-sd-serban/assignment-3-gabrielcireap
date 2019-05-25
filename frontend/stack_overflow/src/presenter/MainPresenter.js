@@ -1,10 +1,10 @@
 import QuestionsTablePresenter from "./QuestionsTablePresenter";
 import * as userSelectors from "../model/user/userSelectors";
-import * as userActions from "../model/user/userActions";
-import * as questionActions from "../model/question/questionActions";
-import store from "../model/store/store";
 import QuestionRestClient from "../rest/QuestionRestClient";
 import UserRestClient from "../rest/UserRestClient";
+import invoker from "../model/command/Invoker";
+import { LoadQuestionsCommand } from "../model/question/questionCommands";
+import { LoadUsersCommand } from "../model/user/userCommands";
 
 class MainPresenter {
 
@@ -46,6 +46,14 @@ class MainPresenter {
         });
     }
 
+    onUndo() {
+        invoker.undo();
+    }
+
+    onRedo() {
+        invoker.redo();
+    }
+
     onInit() {
 
         let loggedUser = userSelectors.getLoggedUser();
@@ -53,11 +61,11 @@ class MainPresenter {
         let questionClient = new QuestionRestClient(loggedUser.username, loggedUser.password);
 
         questionClient.loadQuestions().then(questions => {
-            store.dispatch(questionActions.loadQuestions(questions));
+            invoker.execute(new LoadQuestionsCommand(questions));
         });
 
         userClient.loadUsers().then(users => {
-            store.dispatch(userActions.loadUsers(users));
+            invoker.execute(new LoadUsersCommand(users));
         });
     }
 }

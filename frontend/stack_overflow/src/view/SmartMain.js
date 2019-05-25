@@ -3,7 +3,6 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import MainPresenter from "../presenter/MainPresenter";
 import { toString as userToString } from "../model/user/userSelectors";
-import { toString as tagToString } from "../model/tag/tagSelectors";
 
 const mapMainStateToComponentState = (state)=> ({
     users: state.userState.users,
@@ -20,14 +19,13 @@ function mapDispatchToProps(dispatch) {
         onAnswer: MainPresenter.onAnswer,
         onDeleteQuestion: MainPresenter.onDeleteQuestion,
         onUpvoteQuestion: MainPresenter.onUpvoteQuestion,
-        onDownvoteQuestion: MainPresenter.onDownvoteQuestion
+        onDownvoteQuestion: MainPresenter.onDownvoteQuestion,
+        onUndo: MainPresenter.onUndo,
+        onRedo: MainPresenter.onRedo
     };
 }
 
 class SmartMain extends Component {
-    constructor() {
-        super();
-    }
 
     componentDidMount() {
         MainPresenter.onInit();
@@ -47,8 +45,9 @@ class SmartMain extends Component {
                 onDeleteQuestion={this.props.onDeleteQuestion}
                 onUpvoteQuestion={this.props.onUpvoteQuestion}
                 onDownvoteQuestion={this.props.onDownvoteQuestion}
+                onUndo={this.props.onUndo}
+                onRedo={this.props.onRedo}
                 userToString={userToString}
-                tagToString={tagToString}
             />
         );
     }

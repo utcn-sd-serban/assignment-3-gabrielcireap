@@ -1,6 +1,6 @@
 import React from "react";
 
-const QuestionsTable = ({ questions, onAnswer, onDeleteQuestion, onUpvoteQuestion, onDownvoteQuestion, userToString, tagToString }) => (
+const QuestionsTable = ({ questions, onAnswer, onDeleteQuestion, onUpvoteQuestion, onDownvoteQuestion, userToString }) => (
     <div className="container is-fluid">
         <table className="table" border="1">
             <thead>
@@ -28,7 +28,7 @@ const QuestionsTable = ({ questions, onAnswer, onDeleteQuestion, onUpvoteQuestio
                             <td> {question.text} </td>
                             <td className="has-text-centered"> {question.creationDate} </td>
                             <td className="has-text-centered"> {question.voteCount} </td>
-                            <td> {tagToString(question.tags)} </td>
+                            <td> {question.tags} </td>
                             <td><button className="button is-link" onClick={() => onAnswer(question.id)}> Answer </button></td>
                             <td><button className="button is-warning" onClick={() => onDeleteQuestion(question.id)}> Delete </button></td>
                             <td><button className="button is-success" onClick={() => onUpvoteQuestion(question.id)}> Upvote </button></td>

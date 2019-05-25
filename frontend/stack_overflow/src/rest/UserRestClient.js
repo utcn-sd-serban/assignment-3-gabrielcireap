@@ -40,7 +40,6 @@ export default class RestClient {
         return fetch(BASE_URL + "/users", {
             method: "POST",
             headers: {
-                "Authorization": this.authorization,
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },

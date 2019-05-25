@@ -1,10 +1,7 @@
 import * as questionSelectors from "../model/question/questionSelectors";
-import * as questionActions from "../model/question/questionActions";
-import * as tagSelectors from "../model/tag/tagSelectors";
-import * as tagActions from "../model/tag/tagActions";
 import * as userSelectors from "../model/user/userSelectors";
-
-import store from "../model/store/store";
+import invoker from "../model/command/Invoker";
+import { LoadQuestionsCommand, ChangeNewQuestionPropertyCommand } from "../model/question/questionCommands";
 import QuestionRestClient from "../rest/QuestionRestClient";
 import VoteRestClient from "../rest/VoteRestClient";
 
@@ -12,15 +9,12 @@ class QuestionTablePresenter {
     
     onCreate() {
         let newQuestion = questionSelectors.getNewQuestion();
-        let tags;
         let questionTags = [];
 
         if (newQuestion.tags.length === 0) {
-            tags = [];
+            questionTags = [];
         } else {
-            tags = newQuestion.tags.split(",").filter(tag => tagSelectors.isNew(tag) === true);
-            tags.forEach(tag => store.dispatch(tagActions.addTag(tag)));
-            tags.forEach(tag => questionTags.push(tag));
+            newQuestion.tags.split(",").forEach(tag => questionTags.push(tag));
         }
 
         let loggedUser = userSelectors.getLoggedUser();
@@ -30,14 +24,14 @@ class QuestionTablePresenter {
                 window.alert(response.type);
             }
         });
-        
-        store.dispatch(questionActions.changeNewQuestionProperty("title", ""));
-        store.dispatch(questionActions.changeNewQuestionProperty("text", ""));
-        store.dispatch(questionActions.changeNewQuestionProperty("tags", ""));
+
+        invoker.execute(new ChangeNewQuestionPropertyCommand("title", ""));
+        invoker.execute(new ChangeNewQuestionPropertyCommand("text", ""));
+        invoker.execute(new ChangeNewQuestionPropertyCommand("tags", ""));
     }
 
     onChange(property, value) {
-        store.dispatch(questionActions.changeNewQuestionProperty(property, value));
+        invoker.execute(new ChangeNewQuestionPropertyCommand(property, value));
     }
 
     onAnswer(id) {
@@ -65,9 +59,9 @@ class QuestionTablePresenter {
             }
         });
         
-        store.dispatch(questionActions.changeNewQuestionProperty("title", ""));
-        store.dispatch(questionActions.changeNewQuestionProperty("text", ""));
-        store.dispatch(questionActions.changeNewQuestionProperty("tags", ""));
+        invoker.execute(new ChangeNewQuestionPropertyCommand("title", ""));
+        invoker.execute(new ChangeNewQuestionPropertyCommand("text", ""));
+        invoker.execute(new ChangeNewQuestionPropertyCommand("tags", ""));
     }
 
     onUpvoteQuestion(questionId) {
@@ -98,7 +92,7 @@ class QuestionTablePresenter {
         let loggedUser = userSelectors.getLoggedUser();
         let questionClient = new QuestionRestClient(loggedUser.username, loggedUser.password);
         questionClient.loadQuestions().then(questions => {
-            store.dispatch(questionActions.loadQuestions(questions));
+            invoker.execute(new LoadQuestionsCommand(questions));
         });;
     }
 }

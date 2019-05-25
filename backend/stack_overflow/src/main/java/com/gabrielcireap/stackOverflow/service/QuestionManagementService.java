@@ -30,9 +30,7 @@ public class QuestionManagementService {
     public List<QuestionDTO> listQuestions() {
         List<Question> questions = repositoryFactory.createQuestionRepository().findAll();
         questions.sort((q1, q2) -> q1.getCreationDate().after(q2.getCreationDate()) ? -1 : 1);
-        List<QuestionDTO> questionDTOList = questions.stream().map(QuestionDTO::ofEntity).collect(Collectors.toList());
-        eventPublisher.publishEvent(new QuestionsLoadedEvent(questionDTOList));
-        return questionDTOList;
+        return questions.stream().map(QuestionDTO::ofEntity).collect(Collectors.toList());
     }
 
     @Transactional

@@ -1,9 +1,9 @@
-import * as answerActions from "../model/answer/answerActions";
 import * as answerSelectors from "../model/answer/answerSelectors";
 import * as userSelectors from "../model/user/userSelectors";
-import store from "../model/store/store";
 import AnswerRestClient from "../rest/AnswerRestClient";
 import VoteRestClient from "../rest/VoteRestClient";
+import invoker from "../model/command/Invoker";
+import { LoadAnswersCommand, ChangeNewAnswerPropertyCommand } from "../model/answer/answerCommands";
 
 class AnswersTablePresenter {
 
@@ -18,11 +18,12 @@ class AnswersTablePresenter {
                 window.alert(response.type);
             }
         });
-        store.dispatch(answerActions.changeNewAnswerProperty("text", ""));
+
+        invoker.execute(new ChangeNewAnswerPropertyCommand("text", ""));
     }
 
     onChange(property, value) {
-        store.dispatch(answerActions.changeNewAnswerProperty(property, value));
+        invoker.execute(new ChangeNewAnswerPropertyCommand(property, value));
     }
 
     onEditAnswer(id) {
@@ -38,7 +39,7 @@ class AnswersTablePresenter {
             }
         });
 
-        store.dispatch(answerActions.changeNewAnswerProperty("text", ""));
+        invoker.execute(new ChangeNewAnswerPropertyCommand("text", ""));
     }
 
     onDeleteAnswer(id) {
@@ -79,7 +80,7 @@ class AnswersTablePresenter {
         let loggedUser = userSelectors.getLoggedUser();
         let answerClient = new AnswerRestClient(loggedUser.username, loggedUser.password);
         answerClient.loadAnswers().then(answers => {
-            store.dispatch(answerActions.loadAnswers(answers));
+            invoker.execute(new LoadAnswersCommand(answers));
         });
     }
 }

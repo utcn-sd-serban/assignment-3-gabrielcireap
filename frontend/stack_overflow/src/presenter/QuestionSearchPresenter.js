@@ -1,9 +1,9 @@
-import store from "../model/store/store";
-import * as questionActions from "../model/question/questionActions";
 import * as questionSelectors from "../model/question/questionSelectors";
 import * as userSelectors from "../model/user/userSelectors";
 import QuestionsTablePresenter from "./QuestionsTablePresenter";
 import QuestionRestClient from "../rest/QuestionRestClient";
+import invoker from "../model/command/Invoker";
+import { LoadQuestionsCommand, ChangeNewQuestionPropertyCommand } from "../model/question/questionCommands";
 
 class QuestionSearchPresenter {
 
@@ -16,12 +16,12 @@ class QuestionSearchPresenter {
                 window.alert(response.type);
             }
         });
-        
-        store.dispatch(questionActions.changeNewQuestionProperty("title", ""));
+
+        invoker.execute(new ChangeNewQuestionPropertyCommand("title", ""));
     }
 
     onChange(property, value) {
-        store.dispatch(questionActions.changeNewQuestionProperty(property, value));
+        invoker.execute(new ChangeNewQuestionPropertyCommand(property, value));
     }
 
     onAnswer(id) {
@@ -45,7 +45,7 @@ class QuestionSearchPresenter {
         let client = new QuestionRestClient(loggedUser.username, loggedUser.password);
 
         client.loadQuestions().then(questions => {
-            store.dispatch(questionActions.loadQuestions(questions));
+            invoker.execute(new LoadQuestionsCommand(questions));
         });
     }
 }

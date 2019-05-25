@@ -1,8 +1,8 @@
-import store from "../model/store/store";
-import * as userActions from "../model/user/userActions";
+import invoker from "../model/command/Invoker";
+import { LogUserCommand, ChangeNewUserPropertyCommand } from "../model/user/userCommands";
 import * as userSelectors from "../model/user/userSelectors";
 import UserRestClient from "../rest/UserRestClient";
-const userClient = new UserRestClient("user1", "pass1");
+const userClient = new UserRestClient("", "");
 
 class LoginPresenter {
 
@@ -21,14 +21,14 @@ class LoginPresenter {
                     score: user.score
                 }
 
-                store.dispatch(userActions.logUser(logUser));
+                invoker.execute(new LogUserCommand(logUser));
                 window.location.assign("#/index");
             }
         });
-        
-        store.dispatch(userActions.changeNewUserProperty("username", ""));
-        store.dispatch(userActions.changeNewUserProperty("password", ""));
-        store.dispatch(userActions.changeNewUserProperty("email", ""));
+
+        invoker.execute(new ChangeNewUserPropertyCommand("username", ""));
+        invoker.execute(new ChangeNewUserPropertyCommand("password", ""));
+        invoker.execute(new ChangeNewUserPropertyCommand("email", ""));
     }
 
     onRegister() {
@@ -38,14 +38,14 @@ class LoginPresenter {
                 window.alert("User already registered!");
             }
         });
-        
-        store.dispatch(userActions.changeNewUserProperty("username", ""));
-        store.dispatch(userActions.changeNewUserProperty("password", ""));
-        store.dispatch(userActions.changeNewUserProperty("email", ""));
+
+        invoker.execute(new ChangeNewUserPropertyCommand("username", ""));
+        invoker.execute(new ChangeNewUserPropertyCommand("password", ""));
+        invoker.execute(new ChangeNewUserPropertyCommand("email", ""));
     }
 
     onChange(property, value) {
-        store.dispatch(userActions.changeNewUserProperty(property, value));
+        invoker.execute(new ChangeNewUserPropertyCommand(property, value));
     }
 }
 

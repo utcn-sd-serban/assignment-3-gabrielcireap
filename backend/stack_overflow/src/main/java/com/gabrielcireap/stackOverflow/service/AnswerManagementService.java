@@ -6,7 +6,6 @@ import com.gabrielcireap.stackOverflow.entity.Question;
 import com.gabrielcireap.stackOverflow.event.AnswerCreatedEvent;
 import com.gabrielcireap.stackOverflow.event.AnswerDeletedEvent;
 import com.gabrielcireap.stackOverflow.event.AnswerUpdatedEvent;
-import com.gabrielcireap.stackOverflow.event.AnswersLoadedEvent;
 import com.gabrielcireap.stackOverflow.exception.AnswerNotFoundException;
 import com.gabrielcireap.stackOverflow.exception.NotEnoughPermissionsException;
 import com.gabrielcireap.stackOverflow.exception.QuestionNotFoundException;
@@ -69,8 +68,6 @@ public class AnswerManagementService {
     public List<AnswerDTO> findAll(){
         List<Answer> answers = repositoryFactory.createAnswerRepository().findAll();
         answers.sort((a1, a2) -> a1.getVoteCount() > a2.getVoteCount() ? -1 : 1);
-        List<AnswerDTO> answersList = answers.stream().map(AnswerDTO::ofEntity).collect(Collectors.toList());
-        eventPublisher.publishEvent(new AnswersLoadedEvent(answersList));
-        return answersList;
+        return answers.stream().map(AnswerDTO::ofEntity).collect(Collectors.toList());
     }
 }

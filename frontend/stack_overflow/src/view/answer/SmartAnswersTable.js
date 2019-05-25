@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import AnswersTable from "./AnswersTable";
 import AnswersInput from "./AnswersInput";
 import AnswersTablePresenter from "../../presenter/AnswersTablePresenter";
+import MainPresenter from "../../presenter/MainPresenter";
 import { toString as userToString } from "../../model/user/userSelectors";
 import { toString as questionToString } from "../../model/question/questionSelectors";
 import { findById } from "../../model/question/questionSelectors";
@@ -21,31 +22,28 @@ function mapDispatchToProps(dispatch) {
         onEditAnswer: AnswersTablePresenter.onEditAnswer,
         onDeleteAnswer: AnswersTablePresenter.onDeleteAnswer,
         onUpvoteAnswer: AnswersTablePresenter.onUpvoteAnswer,
-        onDownvoteAnswer: AnswersTablePresenter.onDownvoteAnswer
+        onDownvoteAnswer: AnswersTablePresenter.onDownvoteAnswer,
+        onUndo: MainPresenter.onUndo,
+        onRedo: MainPresenter.onRedo
     };
 }
 
 class SmartAnswersTable extends Component {
-
-    constructor(props) {
-        super(props);
-    }
-
+ 
     componentDidMount() {
         AnswersTablePresenter.onInit();
     }
 
     render() {
         return (
-            <div>
-                <h2 className="title">
-                    Answers
-                </h2>
+            <div className="container">
                 <AnswersInput
                     text={this.props.text}
                     currentQuestion={this.props.selectedQuestion}
                     onChange={this.props.onChange}
                     onCreate={this.props.onCreate}
+                    onUndo={this.props.onUndo}
+                    onRedo={this.props.onRedo}
                 />
 
                 <AnswersTable

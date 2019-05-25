@@ -19,10 +19,6 @@ function mapDispatchToProps(dispatch) {
 
 class SmartLoginTable extends Component {
 
-    constructor() {
-        super();
-    }
-
     render() {
         return (
 

@@ -2,15 +2,8 @@
   "ExpandedNodes": [
     "",
     "\\src",
-    "\\src\\model",
-    "\\src\\model\\answer",
-    "\\src\\model\\question",
-    "\\src\\model\\user",
-    "\\src\\presenter",
-    "\\src\\rest",
-    "\\src\\view",
-    "\\src\\view\\question"
+    "\\src\\model"
   ],
-  "SelectedNode": "\\src\\view",
+  "SelectedNode": "\\src\\model\\answer",
   "PreviewInSolutionExplorer": false
 }

@@ -4,7 +4,6 @@ import com.gabrielcireap.stackOverflow.dto.UserShowDTO;
 import com.gabrielcireap.stackOverflow.entity.User;
 import com.gabrielcireap.stackOverflow.event.UserCreatedEvent;
 import com.gabrielcireap.stackOverflow.event.UserUpdatedEvent;
-import com.gabrielcireap.stackOverflow.event.UsersLoadedEvent;
 import com.gabrielcireap.stackOverflow.exception.DuplicateUserException;
 import com.gabrielcireap.stackOverflow.exception.NotEnoughPermissionsException;
 import com.gabrielcireap.stackOverflow.exception.UserNotFoundException;
@@ -28,9 +27,7 @@ public class UserManagementService {
 
     @Transactional
     public List<UserShowDTO> listUsers() {
-        List<UserShowDTO> users = repositoryFactory.createUserRepository().findAll().stream().map(UserShowDTO::ofEntity).collect(Collectors.toList());
-        eventPublisher.publishEvent(new UsersLoadedEvent(users));
-        return users;
+        return repositoryFactory.createUserRepository().findAll().stream().map(UserShowDTO::ofEntity).collect(Collectors.toList());
     }
 
     @Transactional

@@ -39,11 +39,11 @@ function questionReducer(state = initialState, action) {
 };
 
 function addQuestion(state, payload) {
+
     let newState = {
         ...state,
         questions: state.questions.concat([payload.question])
     };
-
     return newState;
 }
 
@@ -102,6 +102,16 @@ function search(state, payload) {
 }
 
 function loadQuestions(state, payload) {
+
+    payload.questions.forEach(question => {
+        let finalTags = [];
+        question.tags.forEach(tag => {
+            finalTags.push(tag);
+            finalTags.push(" ");
+        });
+        question.tags = finalTags;
+    });
+
     return {
         ...state,
         questions: payload.questions
