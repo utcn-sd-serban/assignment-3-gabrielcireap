@@ -43,7 +43,7 @@ class QuestionTablePresenter {
         let questionClient = new QuestionRestClient(loggedUser.username, loggedUser.password);
         questionClient.deleteQuestion(id).then(status => {
             if (status >= 300) {
-                window.alert("Cannot find question!");
+                window.alert("You do not have enough permissions!");
             }
         });
     }

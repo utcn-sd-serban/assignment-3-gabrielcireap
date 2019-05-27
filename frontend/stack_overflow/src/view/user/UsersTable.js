@@ -22,7 +22,7 @@ const UsersTable = ({ users, onBan }) => (
                             <td> {user.score} </td>
                             <td> {user.isAdmin === true ? "admin" : "non-admin"} </td>
                             <td> {user.isBanned === true ? "banned" : "not banned"} </td>
-                            <td><button className="button is-dark" onClick={() => onBan(user.id)}> Ban </button></td>
+                            <td><button data-cy={"banUser" + index} className="button is-dark" onClick={() => onBan(user.id)}> Ban </button></td>
                         </tr>
                     ))
                 }

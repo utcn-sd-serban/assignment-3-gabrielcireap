@@ -31,6 +31,11 @@ public class InMemoryQuestionRepository implements QuestionRepository {
     }
 
     @Override
+    public void removeAll() {
+        data.clear();
+    }
+
+    @Override
     public Optional<Question> findById(int id){
         return Optional.ofNullable(data.get(id));
     }

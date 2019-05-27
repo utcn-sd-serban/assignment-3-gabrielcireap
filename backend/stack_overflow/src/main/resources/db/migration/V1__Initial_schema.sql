@@ -4,7 +4,7 @@ USE assignment;
 CREATE TABLE IF NOT EXISTS user (
     id INT AUTO_INCREMENT,
     username VARCHAR(45) NOT NULL,
-    password VARCHAR(45) NOT NULL,
+    password VARCHAR(100) NOT NULL,
     email VARCHAR(45),
     score INTEGER,
     is_admin BOOLEAN,

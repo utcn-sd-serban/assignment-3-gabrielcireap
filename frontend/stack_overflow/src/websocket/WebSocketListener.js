@@ -2,6 +2,7 @@ import { EventEmitter } from "events";
 import { Client } from "@stomp/stompjs";
 import invoker from "../model/command/Invoker";
 
+import { getLoggedUser } from "../model/user/userSelectors";
 import { AddUserCommand, EditUserCommand } from "../model/user/userCommands";
 import { AddQuestionCommand, DeleteQuestionCommand, EditQuestionCommand, SaveSearchedQuestionsCommand }
     from "../model/question/questionCommands";
@@ -24,7 +25,8 @@ class WebSocketListener extends EventEmitter {
     }
 }
 
-export const listener = new WebSocketListener("user1", "pass1");
+const loggedUser = getLoggedUser();
+export const listener = new WebSocketListener(loggedUser.username, loggedUser.password);
 
 listener.on("event", event => {
     switch (event.type) {
@@ -35,7 +37,6 @@ listener.on("event", event => {
             invoker.executeAndAdd(new EditUserCommand(event.user));
             break;
         case "QUESTION_CREATED":
-            debugger;
             invoker.executeAndAdd(new AddQuestionCommand(event.question));
             break;
         case "QUESTION_DELETED":

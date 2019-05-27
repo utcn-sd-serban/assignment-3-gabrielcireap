@@ -14,9 +14,9 @@ public interface DataUserRepository  extends Repository<User, Integer>, UserRepo
         delete(user);
     }
 
-    Optional<User> findUserByUsernameAndPassword(String username, String password);
+    void deleteAll();
     @Override
-    default Optional<User> findUserByLogin(String username, String password) {
-        return findUserByUsernameAndPassword(username, password);
+    default void removeAll() {
+        deleteAll();
     }
 }

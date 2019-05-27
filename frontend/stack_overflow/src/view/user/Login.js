@@ -6,7 +6,7 @@ const Login = ({ username, password, email, onChange, onLogin, onRegister }) => 
         <div className="column is-one-quarter">
             <label className="label">Username</label>
             <div className="control has-icons-left has-icons-right">
-                <input className="input is-success" type="text" placeholder="Text input" value={username} onChange={e => onChange("username", e.target.value)} />
+                <input data-cy="username" className="input is-success" type="text" placeholder="Text input" value={username} onChange={e => onChange("username", e.target.value)} />
                 <span className="icon is-small is-left">
                     <i className="fas fa-user"></i>
                     </span>
@@ -19,7 +19,7 @@ const Login = ({ username, password, email, onChange, onLogin, onRegister }) => 
         <div className="column is-one-quarter">
             <label className="label">Password</label>
             <p className="control has-icons-left">
-                <input className="input is-success" type="password" placeholder="Password" value={password} onChange={e => onChange("password", e.target.value)}/>
+                <input data-cy="password" className="input is-success" type="password" placeholder="Password" value={password} onChange={e => onChange("password", e.target.value)}/>
                 <span className="icon is-small is-left">
                     <i className="fas fa-lock"></i>
                 </span>
@@ -29,7 +29,7 @@ const Login = ({ username, password, email, onChange, onLogin, onRegister }) => 
         <div className="column is-one-quarter">
             <label className="label">Email</label>
             <div className="control has-icons-left has-icons-right">
-                <input className="input is-success" type="text" placeholder="Text input" value={email} onChange={e => onChange("email", e.target.value)} />
+                <input data-cy="email" className="input is-success" type="text" placeholder="Text input" value={email} onChange={e => onChange("email", e.target.value)} />
                 <span className="icon is-small is-left">
                     <i className="fas fa-user"></i>
                 </span>
@@ -40,8 +40,8 @@ const Login = ({ username, password, email, onChange, onLogin, onRegister }) => 
         </div>
         <br />
 
-        <button className="button" onClick={onLogin}> Login </button>
-        <button className="button" onClick={onRegister}> Register </button>
+        <button data-cy="loginButton" className="button" onClick={onLogin}> Login </button>
+        <button data-cy="registerButton" className="button" onClick={onRegister}> Register </button>
     </div>
 );
 

@@ -16,20 +16,18 @@ const Main = ({ questions, users, loggedUser, onAskQuestion, onSearchQuestionTit
             <div className="navbar-end">
                 <div className="navbar-item">
                     <div className="buttons">
-                        <a className="button is-light" onClick={onUndo}>
+                        <a data-cy="undo" className="button is-light" onClick={onUndo}>
                             Undo
                         </a>
-                        <a className="button is-light" onClick={onRedo}>
+                        <a data-cy="redo" className="button is-light" onClick={onRedo}>
                             Redo
                         </a>
                     </div>
                 </div>
             </div>
-        </nav>
+            </nav>
 
-        <button className="button is-light" onClick={onUndo}> Undo </button>
-        <button className="button is-light" onClick={onRedo}> Redo </button>
-        <button className="button is-light" onClick={onAskQuestion}> Ask Question </button>
+        <button data-cy="askQuestion" className="button is-light" onClick={onAskQuestion}> Ask Question </button>
         <button className="button is-light" onClick={onSearchQuestionTitle}> Search Questions by Title </button>
         <button className="button is-light" onClick={onSearchQuestionTag}> Search Questions by Tag </button>
         <br />

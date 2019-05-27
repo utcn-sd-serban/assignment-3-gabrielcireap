@@ -2,8 +2,10 @@
   "ExpandedNodes": [
     "",
     "\\src",
-    "\\src\\model"
+    "\\src\\model",
+    "\\src\\model\\store",
+    "\\src\\websocket"
   ],
-  "SelectedNode": "\\src\\model\\answer",
+  "SelectedNode": "\\src\\model\\store\\store.js",
   "PreviewInSolutionExplorer": false
 }
