@@ -41,6 +41,7 @@ public class QuestionManagementService {
     @Transactional
     public QuestionDTO save(String title, String text, List<String> tagList) {
         List<Tag> tags = stringToTags(tagList);
+        tags.forEach(tag -> tag.setName(tag.getName().trim()));
         List<String> allTagNames = repositoryFactory.createTagRepository().findAll().stream().map(Tag::getName).collect(Collectors.toList());
         tags.stream().filter(tag -> !allTagNames.contains(tag.getName())).forEach(tag -> repositoryFactory.createTagRepository().save(tag));
 

@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import MainPresenter from "../presenter/MainPresenter";
 import { toString as userToString } from "../model/user/userSelectors";
+import { listener } from "../websocket/WebSocketListener";
 
 const mapMainStateToComponentState = (state)=> ({
     users: state.userState.users,

@@ -6,7 +6,6 @@ import { Provider } from "react-redux";
 import store from "./model/store/store";
 import * as serviceWorker from './serviceWorker';
 import 'bulma/css/bulma.css';
-import { listener } from "./websocket/WebSocketListener";
 
 ReactDOM.render(
     <Provider store={store}>

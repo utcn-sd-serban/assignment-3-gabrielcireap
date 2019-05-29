@@ -26,7 +26,8 @@ class WebSocketListener extends EventEmitter {
 }
 
 const loggedUser = getLoggedUser();
-export const listener = new WebSocketListener(loggedUser.username, loggedUser.password);
+console.log(loggedUser);
+export const listener = new WebSocketListener("ws", "ws");
 
 listener.on("event", event => {
     switch (event.type) {

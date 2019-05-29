@@ -41,28 +41,30 @@ public class ApplicationSeed implements CommandLineRunner {
 
         if (userRepository.findAll().isEmpty()) {
             userRepository.save(new User(null, "user1", passwordEncoder.encode("pass1"), "email1", 0, true, false));
+            userRepository.save(new User(null, "ws", passwordEncoder.encode("ws"), "email1", 0, true, false));
             userRepository.save(new User("user2", passwordEncoder.encode("pass2"), "email2"));
             userRepository.save(new User("user3", passwordEncoder.encode("pass3"), "email3"));
         }
 
         if (questionRepository.findAll().isEmpty()) {
-            Tag tag1 = new Tag(1, "q1");
-            Tag tag2 = new Tag(2, "q2");
-            Tag tag3 = new Tag(3, "q3");
+            Tag tag1 = new Tag(null, "q1");
+            Tag tag2 = new Tag(null, "q2");
+            Tag tag3 = new Tag(null, "q3");
             tagRepository.save(tag1);
             tagRepository.save(tag2);
             tagRepository.save(tag3);
-            questionRepository.save(new Question(null, userRepository.findById(3 * times - 2).get(),
+
+            questionRepository.save(new Question(null, userRepository.findById(4 * times - 3).get(),
                     "Prima intrebare", "Acesta este primul text la prima intrebare",
                     new Timestamp(System.currentTimeMillis()), 0,
                     new ArrayList<Tag>(Arrays.asList(tag1))));
 
-            questionRepository.save(new Question(null, userRepository.findById(3 * times - 1).get(),
+            questionRepository.save(new Question(null, userRepository.findById(4 * times - 1).get(),
                     "Second question", "How to get a 10 at SD lab?",
                     new Timestamp(System.currentTimeMillis()), 0,
                     new ArrayList<>(Arrays.asList(tag1, tag2))));
 
-            questionRepository.save(new Question(null, userRepository.findById(3 * times).get(),
+            questionRepository.save(new Question(null, userRepository.findById(4 * times).get(),
                     "Third question", "This is the third question",
                     new Timestamp(System.currentTimeMillis()), 0,
                     new ArrayList<>(Arrays.asList(tag2, tag3))));

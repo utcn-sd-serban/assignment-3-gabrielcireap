@@ -9,8 +9,8 @@ class LoginPresenter {
     onLogin() {
         var newUser = userSelectors.getNewUser();
         userClient.login(newUser.username, newUser.password).then(user => {
-            if (user.type !== undefined) {
-                window.alert(user.type);
+            if (user.username === undefined) {
+                window.alert("Username not found!");
             } else {
                 let logUser = {
                     id: user.id,
@@ -20,7 +20,7 @@ class LoginPresenter {
                     isBanned: user.isBanned,
                     score: user.score
                 }
-
+                debugger;
                 invoker.execute(new LogUserCommand(logUser));
                 window.location.assign("#/index");
             }

@@ -28,8 +28,8 @@ const Main = ({ questions, users, loggedUser, onAskQuestion, onSearchQuestionTit
             </nav>
 
         <button data-cy="askQuestion" className="button is-light" onClick={onAskQuestion}> Ask Question </button>
-        <button className="button is-light" onClick={onSearchQuestionTitle}> Search Questions by Title </button>
-        <button className="button is-light" onClick={onSearchQuestionTag}> Search Questions by Tag </button>
+        <button data-cy="searchQuestionTitle" className="button is-light" onClick={onSearchQuestionTitle}> Search Questions by Title </button>
+        <button data-cy="searchQuestionTag" className="button is-light" onClick={onSearchQuestionTag}> Search Questions by Tag </button>
         <br />
         <br />
 

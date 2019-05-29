@@ -1,4 +1,4 @@
-describe("Undo-redo", function () {
+describe("Searching for a question, by tag", function () {
 
     beforeEach(function () {
         cy.request("http://localhost:8080/test/reseed")
@@ -12,18 +12,23 @@ describe("Undo-redo", function () {
         cy.get('[data-cy="loginButton"]').click();
     }
 
-    it("should add 1 question", function () {
-        login();
+    function addQuestion() {
         cy.get('[data-cy="askQuestion"]').click();
         cy.get('[data-cy="qtitle"]').type("cypress test");
         cy.get('[data-cy="qtext"]').type("cypress text");
         cy.get('[data-cy="qtags"]').type("cypress,testing");
         cy.get('[data-cy="createQuestion"]').click();
 
-        cy.visit("#/index");
-        cy.get('[data-cy="undo"]').click();
-        cy.get('[data-cy="question"]').should("have.length", 3);
-        cy.get('[data-cy="redo"]').click();
         cy.get('[data-cy="question"]').should("have.length", 4);
+    }
+
+    it("should search for one question", function () {
+        login();
+        addQuestion();
+        cy.visit("#/index");
+        cy.get('[data-cy="searchQuestionTitle"]').click();
+        cy.get('[data-cy="qtitle"]').type("cypress");
+        cy.get('[data-cy="searchQuestion"]').click();
+        cy.get('[data-cy="question"]').should("have.length", 1);
     });
 });

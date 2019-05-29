@@ -3,9 +3,13 @@
     "",
     "\\src",
     "\\src\\model",
-    "\\src\\model\\store",
+    "\\src\\presenter",
+    "\\src\\rest",
+    "\\src\\view",
+    "\\src\\view\\question",
+    "\\src\\view\\user",
     "\\src\\websocket"
   ],
-  "SelectedNode": "\\src\\model\\store\\store.js",
+  "SelectedNode": "\\src\\view\\question\\QuestionSearchByTitle.js",
   "PreviewInSolutionExplorer": false
 }

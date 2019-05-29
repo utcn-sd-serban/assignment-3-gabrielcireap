@@ -1,4 +1,4 @@
-describe("Adding an answer", function () {
+describe("Banning a user", function () {
 
     beforeEach(function () {
         cy.request("http://localhost:8080/test/reseed")

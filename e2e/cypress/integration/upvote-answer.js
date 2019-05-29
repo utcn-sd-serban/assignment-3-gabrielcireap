@@ -1,4 +1,4 @@
-describe("Adding an answer", function () {
+describe("Upvote answer", function () {
 
     beforeEach(function () {
         cy.request("http://localhost:8080/test/reseed")
