@@ -3,12 +3,15 @@ import { connect } from "react-redux";
 import AnswersTable from "./AnswersTable";
 import AnswersInput from "./AnswersInput";
 import AnswersTablePresenter from "../../presenter/AnswersTablePresenter";
+import MainPresenter from "../../presenter/MainPresenter";
 import { toString as userToString } from "../../model/user/userSelectors";
 import { toString as questionToString } from "../../model/question/questionSelectors";
+import { findById } from "../../model/question/questionSelectors";
+import { findByQuestion } from "../../model/answer/answerSelectors";
 
 const mapAnswerStateToComponentState = (state, props) => ({
-    selectedQuestion: state.questionState.questions[props.match.params.id-1],
-    answers: state.answerState.answersByQuestion,
+    selectedQuestion: findById(props.match.params.id),
+    answers: findByQuestion(props.match.params.id),
     text: state.answerState.newAnswer.text
 });
 
@@ -19,31 +22,28 @@ function mapDispatchToProps(dispatch) {
         onEditAnswer: AnswersTablePresenter.onEditAnswer,
         onDeleteAnswer: AnswersTablePresenter.onDeleteAnswer,
         onUpvoteAnswer: AnswersTablePresenter.onUpvoteAnswer,
-        onDownvoteAnswer: AnswersTablePresenter.onDownvoteAnswer
+        onDownvoteAnswer: AnswersTablePresenter.onDownvoteAnswer,
+        onUndo: MainPresenter.onUndo,
+        onRedo: MainPresenter.onRedo
     };
 }
 
 class SmartAnswersTable extends Component {
-
-    constructor(props) {
-        super(props);
-    }
-
+ 
     componentDidMount() {
-        AnswersTablePresenter.onInit(this.props.selectedQuestion.id);
+        AnswersTablePresenter.onInit();
     }
 
     render() {
         return (
-            <div>
-                <h2 className="title">
-                    Answers
-                </h2>
+            <div className="container">
                 <AnswersInput
                     text={this.props.text}
                     currentQuestion={this.props.selectedQuestion}
                     onChange={this.props.onChange}
                     onCreate={this.props.onCreate}
+                    onUndo={this.props.onUndo}
+                    onRedo={this.props.onRedo}
                 />
 
                 <AnswersTable

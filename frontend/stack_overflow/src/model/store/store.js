@@ -2,16 +2,16 @@ import { combineReducers, createStore } from "redux";
 import userReducer from "../user/userReducer";
 import questionReducer from "../question/questionReducer";
 import answerReducer from "../answer/answerReducer";
-import tagReducer from "../tag/tagReducer";
-import voteReducer from "../vote/voteReducer";
 
 const rootReducer = combineReducers({
     userState: userReducer,
     questionState: questionReducer,
-    answerState: answerReducer,
-    tagState: tagReducer,
-    voteState: voteReducer
+    answerState: answerReducer
 });
+
+export function dispatch(action) {
+    store.dispatch(action);
+}
 
 const store = createStore(rootReducer);
 

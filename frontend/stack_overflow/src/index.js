@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import SmartApp from './SmartApp';
 import { Provider } from "react-redux";
 import store from "./model/store/store";
 import * as serviceWorker from './serviceWorker';
@@ -9,7 +9,7 @@ import 'bulma/css/bulma.css';
 
 ReactDOM.render(
     <Provider store={store}>
-        <App />
+        <SmartApp />
     </Provider>,
     document.getElementById('root')
 );

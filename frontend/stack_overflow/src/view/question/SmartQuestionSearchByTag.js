@@ -2,9 +2,9 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import QuestionsTable from "./QuestionsTable";
 import QuestionSearchTagPresenter from "../../presenter/QuestionSearchTagPresenter";
+import MainPresenter from "../../presenter/MainPresenter";
 import QuestionSearchByTag from "./QuestionSearchByTitle";
 import { toString as userToString } from "../../model/user/userSelectors";
-import { toString as tagToString } from "../../model/tag/tagSelectors";
 
 const mapQuestionStateToComponentState = state => ({
     searchedQuestions: state.questionState.searchedQuestions,
@@ -18,14 +18,13 @@ function mapDispatchToProps(dispatch) {
         onAnswer: QuestionSearchTagPresenter.onAnswer,
         onDeleteQuestion: QuestionSearchTagPresenter.onDeleteQuestion,
         onUpvoteQuestion: QuestionSearchTagPresenter.onUpvoteQuestion,
-        onDownvoteQuestion: QuestionSearchTagPresenter.onDownvoteQuestion
+        onDownvoteQuestion: QuestionSearchTagPresenter.onDownvoteQuestion,
+        onUndo: MainPresenter.onUndo,
+        onRedo: MainPresenter.onRedo
     };
 }
 
 class SmartQuestionSearchByTag extends Component {
-    constructor() {
-        super();
-    }
 
     componentDidMount() {
         QuestionSearchTagPresenter.onInit();
@@ -34,15 +33,14 @@ class SmartQuestionSearchByTag extends Component {
     render() {
         return (
 
-            <div className="container" className="has-background-light">
-                <h2 className="title">
-                    Search Questions by Tag
-                </h2>
+            <div className="container">
 
                 <QuestionSearchByTag
                     title={this.props.title}
                     onChange={this.props.onChange}
                     onSearch={this.props.onSearch}
+                    onUndo={this.props.onUndo}
+                    onRedo={this.props.onRedo}
                 />
 
                 <QuestionsTable
@@ -52,7 +50,6 @@ class SmartQuestionSearchByTag extends Component {
                     onUpvoteQuestion={this.props.onUpvoteQuestion}
                     onDownvoteQuestion={this.props.onDownvoteQuestion}
                     userToString={userToString}
-                    tagToString={tagToString}
                 />
             </div>
         );

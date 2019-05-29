@@ -1,21 +1,19 @@
 import { ADD_USER } from "./userActionTypes";
 import { CHANGE_NEW_USER_PROPERTY } from "./userActionTypes";
-import { UPDATE_SCORE } from "./userActionTypes";
-import { BAN } from "./userActionTypes";
+import { UPDATE_USER } from "./userActionTypes";
 import { LOG_USER } from "./userActionTypes";
 import { LOAD_USERS } from "./userActionTypes";
-import RestClient from "../../rest/UserRestClient";
-const client = new RestClient("user1", "pass1");
 
-export function addUser(username, password, email, score, isAdmin, isBanned) {
+export function addUser(user) {
 
     let payload = {
-        username,
-        password,
-        email,
-        score,
-        isAdmin,
-        isBanned
+        id: user.id,
+        username: user.username,
+        password: user.password,
+        email: user.email,
+        score: user.score,
+        isAdmin: user.isAdmin,
+        isBanned: user.isBanned
     };
 
     return {
@@ -37,33 +35,18 @@ export function changeNewUserProperty(property, value) {
     }
 }
 
-export function updateScore(user, scores) {
-
+export function update(user) {
     let payload = {
-        user,
-        scores
+        user
+    }
+
+    return {
+        type: UPDATE_USER,
+        payload
     };
-
-    return {
-        type: UPDATE_SCORE,
-        payload: payload
-    }
-}
-
-export function ban(user) {
-    let payload = { user: user };
-    return {
-        type: BAN,
-        payload: payload
-    }
 }
 
 export function logUser(user) {
-    /*let payload = client.getLoggedUser(user.username, user.password).then(user => {
-        payload = user;
-        return payload;
-    });*/
-
     let payload = {
         user
     }
@@ -74,9 +57,11 @@ export function logUser(user) {
     };
 }
 
-export function loadUsers() {
+export function loadUsers(users) {
     return {
         type: LOAD_USERS,
-        payload: []
+        payload: {
+            users
+        }
     };
 }

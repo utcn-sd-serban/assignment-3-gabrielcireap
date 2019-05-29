@@ -42,6 +42,11 @@ public class HibernateQuestionRepository implements QuestionRepository {
     }
 
     @Override
+    public void removeAll() {
+        entityManager.clear();
+    }
+
+    @Override
     public Optional<Question> findById(int id) {
         return Optional.ofNullable(entityManager.find(Question.class, id));
     }

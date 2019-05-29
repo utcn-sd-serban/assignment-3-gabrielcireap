@@ -1,0 +1,16 @@
+package com.gabrielcireap.stackOverflow.event;
+
+public enum EventType {
+    USER_CREATED,
+    USER_UPDATED,
+    USERS_LOADED,
+    QUESTION_CREATED,
+    QUESTION_DELETED,
+    QUESTION_UPDATED,
+    QUESTION_SEARCH,
+    QUESTIONS_LOADED,
+    ANSWER_CREATED,
+    ANSWER_DELETED,
+    ANSWER_UPDATED,
+    ANSWERS_LOADED
+}

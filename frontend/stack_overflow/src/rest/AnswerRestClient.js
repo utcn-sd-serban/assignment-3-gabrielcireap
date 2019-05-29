@@ -39,7 +39,7 @@ export default class AnswerRestClient {
             voteCount: currentAnswer.voteCount
         };
 
-        return fetch(BASE_URL + "/answers", {
+        return fetch(BASE_URL + "/answers/" + currentAnswer.id, {
             method: "PUT",
             headers: {
                 "Authorization": this.authorization,
@@ -56,11 +56,11 @@ export default class AnswerRestClient {
             headers: {
                 "Authorization": this.authorization
             }
-        }).then(response => response.json());
+        }).then(response => response.status);
     }
-
-    findByQuestion(questionId) {
-        return fetch(BASE_URL + "/questions/" + questionId, {
+    
+    loadAnswers() {
+        return fetch(BASE_URL + "/answers", {
             method: "GET",
             headers: {
                 "Authorization": this.authorization,

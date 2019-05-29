@@ -11,5 +11,5 @@ public interface AnswerRepository {
     Answer save(Answer answer);
     void remove(Answer answer);
     Optional<Answer> findById(int id);
-    List<Answer> findByQuestion(Question question);
+    List<Answer> findAll();
 }

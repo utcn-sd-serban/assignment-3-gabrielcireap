@@ -13,7 +13,6 @@ public class UserShowDTO {
     private Boolean isBanned;
 
     public static UserShowDTO ofEntity(User user) {
-        System.out.println(user);
         UserShowDTO userDTO = new UserShowDTO();
         userDTO.setId(user.getId());
         userDTO.setUsername(user.getUsername());
@@ -22,5 +21,15 @@ public class UserShowDTO {
         userDTO.setIsBanned(user.getIsBanned());
 
         return userDTO;
+    }
+
+    public static User newEntity(UserShowDTO userShowDTO){
+        User user = new User();
+        user.setId(userShowDTO.getId());
+        user.setUsername(userShowDTO.getUsername());
+        user.setIsAdmin(userShowDTO.getIsAdmin());
+        user.setIsBanned(userShowDTO.getIsBanned());
+        user.setScore(userShowDTO.getScore());
+        return user;
     }
 }

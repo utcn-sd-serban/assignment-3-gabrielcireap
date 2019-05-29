@@ -1,24 +1,27 @@
 import QuestionsTablePresenter from "./QuestionsTablePresenter";
-import * as questionActions from "../model/question/questionActions";
 import * as questionSelectors from "../model/question/questionSelectors";
-import store from "../model/store/store";
-import RestClient from "../rest/QuestionRestClient";
-const client = new RestClient("user1", "pass1");
+import * as userSelectors from "../model/user/userSelectors";
+import QuestionRestClient from "../rest/QuestionRestClient";
+import invoker from "../model/command/Invoker";
+import { LoadQuestionsCommand, ChangeNewQuestionPropertyCommand } from "../model/question/questionCommands";
 
 class QuestionSearchTagPresenter {
 
     onSearch() {
         let newQuestion = questionSelectors.getNewQuestion();
-
-        client.findQuestionByTag(newQuestion.title).then(questions => {
-            store.dispatch(questionActions.searchByTag(questions));
+        let loggedUser = userSelectors.getLoggedUser();
+        let client = new QuestionRestClient(loggedUser.username, loggedUser.password);
+        client.findQuestionByTag(newQuestion.title).then(response => {
+            if (response.type !== undefined) {
+                window.alert(response.type);
+            }
         });
-        
-        store.dispatch(questionActions.changeNewQuestionProperty("title", ""));
+
+        invoker.execute(new ChangeNewQuestionPropertyCommand("title", ""));
     }
 
     onChange(property, value) {
-        store.dispatch(questionActions.changeNewQuestionProperty(property, value));
+        invoker.execute(new ChangeNewQuestionPropertyCommand(property, value));
     }
 
     onAnswer(id) {
@@ -38,9 +41,12 @@ class QuestionSearchTagPresenter {
     }
 
     onInit() {
+        let loggedUser = userSelectors.getLoggedUser();
+        let client = new QuestionRestClient(loggedUser.username, loggedUser.password);
+
         client.loadQuestions().then(questions => {
-            store.dispatch(questionActions.loadQuestions(questions));
-        });
+            invoker.execute(new LoadQuestionsCommand(questions));
+        });;
     }
 }
 

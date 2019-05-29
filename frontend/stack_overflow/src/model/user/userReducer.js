@@ -1,29 +1,11 @@
 import { ADD_USER } from "./userActionTypes";
 import { CHANGE_NEW_USER_PROPERTY } from "./userActionTypes";
-import { UPDATE_SCORE } from "./userActionTypes";
-import { BAN } from "./userActionTypes";
+import { UPDATE_USER } from "./userActionTypes";
 import { LOG_USER } from "./userActionTypes";
 import { LOAD_USERS } from "./userActionTypes";
-import RestClient from "../../rest/UserRestClient";
 
 const initialState = {
-    users: [{
-        id: 1,
-        username: "user1",
-        password: "pass1",
-        email: "email1",
-        score: 0,
-        isAdmin: true,
-        isBanned: false,
-    }, {
-        id: 2,
-        username: "user2",
-        password: "pass2",
-        email: "email2",
-        score: 0,
-        isAdmin: false,
-        isBanned: false,
-    }],
+    users: [],
     newUser: {
         id: 3,
         username: "",
@@ -35,18 +17,14 @@ const initialState = {
     },
 
     loggedUser: {
-        id: 1,
-        username: "user1",
-        password: "pass1",
-        email: "email1",
-        score: 0,
-        isAdmin: true,
-        isBanned: false,
-    },
-
-    currentIndex: 3
+        id: "",
+        username: "",
+        password: "",
+        isAdmin: "",
+        isBanned: "",
+        score: ""
+    }
 };
-const client = new RestClient("user1", "pass1");
 
 function userReducer(state = initialState, action) {
 
@@ -55,14 +33,12 @@ function userReducer(state = initialState, action) {
             return addUser(state, action.payload);
         case CHANGE_NEW_USER_PROPERTY:
             return changeNewUserProperty(state, action.payload);
-        case UPDATE_SCORE:
-            return updateScore(state, action.payload);
-        case BAN:
-            return ban(state, action.payload);
+        case UPDATE_USER:
+            return update(state, action.payload);
         case LOG_USER:
             return logUser(state, action.payload);
         case LOAD_USERS:
-            return loadUsers(state);
+            return loadUsers(state, action.payload);
     }
     return state;
 };
@@ -70,7 +46,7 @@ function userReducer(state = initialState, action) {
 function addUser(state, payload) {
 
     let users = state.users.concat([{
-        id: state.currentIndex,
+        id: payload.id,
         username: payload.username,
         password: payload.password,
         email: payload.email,
@@ -81,8 +57,7 @@ function addUser(state, payload) {
 
     let newState = {
         ...state,
-        users: users,
-        currentIndex: state.currentIndex + 1
+        users
     };
    
     return newState;
@@ -99,60 +74,49 @@ function changeNewUserProperty(state, payload) {
     return newState;
 }
 
-function updateScore(state, payload) {
-
-    let oldUser = state.users.filter(u => u.id == payload.user.id);
-    let index = state.users.indexOf(oldUser[0]);
-    let users = state.users.concat([]);
-
-    users[index] = {
-        ...state.users[index],
-        score: state.users[index].score + payload.scores
+function update(state, payload) {
+    let oldUser = state.users.filter(user => user.id == payload.user.id)[0];
+    let newUser = {
+        id: payload.user.id,
+        username: payload.user.username,
+        password: oldUser.password,
+        email: oldUser.email,
+        score: payload.user.score,
+        isAdmin: payload.user.isAdmin,
+        isBanned: payload.user.isBanned,
     };
 
+    let allUsers = state.users.concat([]);
+    allUsers[state.users.indexOf(oldUser)] = newUser;
     let newState = {
         ...state,
-        users: users
-    };
-    
-    return newState;
-}
-
-function ban(state, payload) {
-    let index = state.users.indexOf(payload.user);
-    let users = state.users.concat([]);
-
-    users[index] = {
-        ...state.users[index],
-        isBanned: true
-    };
-
-    let newState = {
-        ...state,
-        users: users
+        users: allUsers
     }
+
     return newState;
 }
 
 function logUser(state, payload) {
     let newState = {
         ...state,
-        loggedUser: payload.user
+        loggedUser: {
+            id: payload.user.id,
+            username: payload.user.username,
+            password: payload.user.password,
+            isAdmin: payload.user.isAdmin,
+            isBanned: payload.user.isBanned,
+            score: payload.user.score
+        }
     }
     return newState;
 }
 
-function loadUsers(state) {
-    let newState;
-    console.log(state);
-    return client.loadUsers().then(users => {
-        newState = {
-            ...state,
-            users
-        };
-        console.log(newState);
-        return newState;
-    });
+function loadUsers(state, payload) {
+    let newState = {
+        ...state,
+        users: payload.users
+    };
+    return newState;
 }
 
 export default userReducer;

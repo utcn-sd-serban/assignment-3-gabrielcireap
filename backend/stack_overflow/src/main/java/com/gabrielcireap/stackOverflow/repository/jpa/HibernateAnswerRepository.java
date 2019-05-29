@@ -19,7 +19,7 @@ public class HibernateAnswerRepository implements AnswerRepository {
 
     @Override
     public Answer save(Answer answer) {
-        if(answer.getId() == null){
+        if (answer.getId() == null) {
             entityManager.persist(answer);
             return answer;
         } else {
@@ -38,12 +38,10 @@ public class HibernateAnswerRepository implements AnswerRepository {
     }
 
     @Override
-    public List<Answer> findByQuestion(Question question) {
+    public List<Answer> findAll() {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Answer> query = builder.createQuery(Answer.class);
-        Root<Answer> answerRoot = query.from(Answer.class);
-
-        query.select(answerRoot).where(builder.equal(answerRoot.get("question"), question));
+        query.select(query.from(Answer.class));
         return entityManager.createQuery(query).getResultList();
     }
 }

@@ -3,12 +3,13 @@
     "",
     "\\src",
     "\\src\\model",
-    "\\src\\model\\answer",
     "\\src\\presenter",
     "\\src\\rest",
     "\\src\\view",
-    "\\src\\view\\answer"
+    "\\src\\view\\question",
+    "\\src\\view\\user",
+    "\\src\\websocket"
   ],
-  "SelectedNode": "\\src\\model\\answer\\answerReducer.js",
+  "SelectedNode": "\\src\\view\\question\\QuestionSearchByTitle.js",
   "PreviewInSolutionExplorer": false
 }

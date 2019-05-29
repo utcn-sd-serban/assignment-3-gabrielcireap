@@ -1,0 +1,1273 @@
+{
+	"info": {
+		"_postman_id": "5d41516a-c3ae-468f-87e2-724f43860ec6",
+		"name": "Postman Tests",
+		"description": "Tests for Stack Overflow Application",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "User Requests",
+			"item": [
+				{
+					"name": "Read All Users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "404cf0af-1e0a-4fa6-afef-be5cf5180d9e",
+								"exec": [
+									"pm.test(\"response is ok\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"received all users\", function(){\r",
+									"    var users = pm.response.json();\r",
+									"    pm.expect(users.length).to.be.gt(2);\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ca69dfc5-beff-4add-9115-2f676a685296",
+								"exec": [
+									"pm.test(\"response is ok\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"received the new user\", function(){\r",
+									"    \r",
+									"    var expectedUser =  {\r",
+									"         \"id\": 4,\r",
+									"        \"username\": \"user4\",\r",
+									"        \"score\": 0,\r",
+									"        \"isAdmin\": false,\r",
+									"        \"isBanned\": false\r",
+									"    };\r",
+									"    \r",
+									"    var user = pm.response.json();\r",
+									"    pm.expect(user).to.be.equal(expectedUser);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pass1",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "user1",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": " {\n    \"username\": \"user4\",\n    \"password\": \"pass4\",\n    \"email\": \"email4\",\n    \"score\": 0,\n    \"isAdmin\": false,\n    \"isBanned\": false\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ban a user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f11de345-2782-41dc-9082-6bebdb53ed67",
+								"exec": [
+									"pm.test(\"response is ok\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"banned the user\", function(){\r",
+									"    \r",
+									"    var expectedUser =  {\r",
+									"        \"id\": 2,\r",
+									"        \"username\": \"user2\",\r",
+									"        \"isBanned\": true\r",
+									"    };\r",
+									"    \r",
+									"    var user = pm.response.json();\r",
+									"    pm.expect(user.id).to.be.equal(expectedUser.id);\r",
+									"    pm.expect(user.username).to.be.equal(expectedUser.username);\r",
+									"    pm.expect(user.isBanned).to.be.equal(expectedUser.isBanned);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pass1",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "user1",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/users/ban/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"ban",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Logged User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "45b72d2a-c979-4e0b-b14e-628688ed376f",
+								"exec": [
+									"pm.test(\"response is ok\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"received the logged user\", function(){\r",
+									"    \r",
+									"    var expectedUser =  {\r",
+									"        \"id\": 1,\r",
+									"        \"username\": \"user1\",\r",
+									"        \"score\": 0,\r",
+									"        \"isAdmin\": true,\r",
+									"        \"isBanned\": false\r",
+									"    };\r",
+									"    \r",
+									"    var user = pm.response.json();\r",
+									"    pm.expect(user.id).to.be.equal(expectedUser.id);\r",
+									"    pm.expect(user.username).to.be.equal(expectedUser.username);\r",
+									"    pm.expect(user.score).to.be.equal(expectedUser.score);\r",
+									"    pm.expect(user.isAdmin).to.be.equal(expectedUser.isAdmin);\r",
+									"    pm.expect(user.isBanned).to.be.equal(expectedUser.isBanned);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pass1",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "user1",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Question Requests",
+			"item": [
+				{
+					"name": "Get All Questions",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "11f8f0b5-2297-415f-80b4-6777db94147e",
+								"exec": [
+									"pm.test(\"response is ok\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"received all questions\", function(){\r",
+									"    var questions = pm.response.json();\r",
+									"    pm.expect(questions.length).to.be.gt(2);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pass1",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "user1",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a question",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "87d49353-7465-4c59-b3ef-108219362cd9",
+								"exec": [
+									"pm.test(\"response is ok\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"received create question\", function(){",
+									"    var expectedQuestion = {",
+									"        \"id\": 4,",
+									"        \"user\": {",
+									"            \"id\": 2,",
+									"            \"username\": \"user2\",",
+									"            \"score\": 0,",
+									"            \"isAdmin\": false,",
+									"            \"isBanned\": true",
+									"        },",
+									"        \"title\": \"Fourth question\",",
+									"        \"text\": \"This is a postman test\",",
+									"        \"creationDate\": \"2019-05-23T06:21:59.172+0000\",",
+									"        \"voteCount\": 0,",
+									"        \"tags\": [",
+									"            \"test\",",
+									"            \"postman\"",
+									"        ]",
+									"    };",
+									"    ",
+									"    var question = pm.response.json();",
+									"    pm.expect(question.id).to.be.equal(expectedQuestion.id);",
+									"    pm.expect(question.text).to.be.equal(expectedQuestion.text);",
+									"    pm.expect(question.title).to.be.equal(expectedQuestion.title);",
+									"    pm.expect(question.tags[0]).to.be.equal(expectedQuestion.tags[0]);",
+									"    pm.expect(question.tags[1]).to.be.equal(expectedQuestion.tags[1]);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pass1",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "user1",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"\",\n    \"user\": {\n        \"id\": 2,\n        \"username\": \"user2\",\n        \"score\": 0,\n        \"isAdmin\": false,\n        \"isBanned\": true\n    },\n    \"title\": \"Fourth question\",\n    \"text\": \"This is a postman test\",\n    \"creationDate\": null,\n    \"voteCount\": 0,\n    \"tags\": [\n        \"test\",\n        \"postman\"\n    ]\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/questions",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"questions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search By Title",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "1cde937f-2de8-4316-b17e-b9daabe79b99",
+								"exec": [
+									"pm.test(\"response is ok\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"received the correct question\", function(){",
+									"    var expectedQuestion = {",
+									"        \"id\": 1,",
+									"        \"user\": {",
+									"            \"id\": 1,",
+									"            \"username\": \"user1\",",
+									"            \"score\": 0,",
+									"            \"isAdmin\": true,",
+									"            \"isBanned\": false",
+									"        },",
+									"        \"title\": \"Prima intrebare\",",
+									"        \"text\": \"Acesta este primul text la prima intrebare\",",
+									"        \"creationDate\": \"2019-05-23T06:21:59.172+0000\",",
+									"        \"voteCount\": 0,",
+									"        \"tags\": [",
+									"            \"q1\"",
+									"        ]",
+									"    };",
+									"    ",
+									"    var question = pm.response.json()[0];",
+									"    pm.expect(question.id).to.be.equal(expectedQuestion.id);",
+									"    pm.expect(question.text).to.be.equal(expectedQuestion.text);",
+									"    pm.expect(question.title).to.be.equal(expectedQuestion.title);",
+									"    pm.expect(question.tags[0]).to.be.equal(expectedQuestion.tags[0]);",
+									"});",
+									"",
+									"pm.test(\"response has the correct number of questions\", function () {",
+									"    pm.expect(pm.response.json().length).to.be.equal(1);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pass1",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "user1",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/questions/search?title=Prima",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"questions",
+								"search"
+							],
+							"query": [
+								{
+									"key": "title",
+									"value": "Prima"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search By Tag",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "23f4cba7-4af8-4c3d-b5e4-495f13413765",
+								"exec": [
+									"pm.test(\"response is ok\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"received the correct question\", function(){",
+									"    var expectedQuestion1 = {",
+									"        \"id\": 1,",
+									"        \"user\": {",
+									"            \"id\": 1,",
+									"            \"username\": \"user1\",",
+									"            \"score\": 0,",
+									"            \"isAdmin\": true,",
+									"            \"isBanned\": false",
+									"        },",
+									"        \"title\": \"Prima intrebare\",",
+									"        \"text\": \"Acesta este primul text la prima intrebare\",",
+									"        \"creationDate\": \"2019-05-23T06:21:59.172+0000\",",
+									"        \"voteCount\": 0,",
+									"        \"tags\": [",
+									"            \"q1\"",
+									"        ]",
+									"    };",
+									"    ",
+									"    var expectedQuestion2 = {",
+									"        \"id\": 2,",
+									"        \"user\": {",
+									"            \"id\": 2,",
+									"            \"username\": \"user2\",",
+									"            \"score\": 0,",
+									"            \"isAdmin\": false,",
+									"            \"isBanned\": true",
+									"        },",
+									"        \"title\": \"Second question\",",
+									"        \"text\": \"How to get a 10 at SD lab?\",",
+									"        \"creationDate\": \"2019-05-23T06:21:59.172+0000\",",
+									"        \"voteCount\": 0,",
+									"        \"tags\": [",
+									"            \"q1\",",
+									"            \"q2\"",
+									"        ]",
+									"    };",
+									"    ",
+									"    ",
+									"    var question = pm.response.json();",
+									"    pm.expect(question[0].id).to.be.equal(expectedQuestion1.id);",
+									"    pm.expect(question[0].text).to.be.equal(expectedQuestion1.text);",
+									"    pm.expect(question[0].title).to.be.equal(expectedQuestion1.title);",
+									"    ",
+									"    pm.expect(question[1].id).to.be.equal(expectedQuestion2.id);",
+									"    pm.expect(question[1].text).to.be.equal(expectedQuestion2.text);",
+									"    pm.expect(question[1].title).to.be.equal(expectedQuestion2.title);",
+									"});",
+									"",
+									"pm.test(\"response has the correct number of questions\", function () {",
+									"    pm.expect(pm.response.json().length).to.be.equal(2);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pass1",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "user1",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/questions/search?tag=q1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"questions",
+								"search"
+							],
+							"query": [
+								{
+									"key": "tag",
+									"value": "q1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit Question",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "23127165-0c49-43ce-b561-f5e9ecfb8137",
+								"exec": [
+									"pm.test(\"response is ok\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"received create question\", function(){",
+									"    var expectedQuestion = {",
+									"        \"id\": 1,",
+									"        \"user\": {",
+									"            \"id\": 1,",
+									"            \"username\": \"user1\",",
+									"            \"score\": 0,",
+									"            \"isAdmin\": true,",
+									"            \"isBanned\": false",
+									"        },",
+									"        \"title\": \"edited\",",
+									"        \"text\": \"edited\"",
+									"    };",
+									"    ",
+									"    var question = pm.response.json();",
+									"    pm.expect(question.id).to.be.equal(expectedQuestion.id);",
+									"    pm.expect(question.text).to.be.equal(expectedQuestion.text);",
+									"    pm.expect(question.title).to.be.equal(expectedQuestion.title);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pass1",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "user1",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 1,\r\n    \"user\": {\r\n        \"id\": \"\",\r\n        \"username\": \"\",\r\n        \"score\": \"\",\r\n        \"isAdmin\": \"\",\r\n        \"isBanned\": \"\"\r\n    },\r\n    \"title\": \"edited\",\r\n    \"text\": \"edited\",\r\n    \"creationDate\": null,\r\n    \"voteCount\": \"\",\r\n    \"tags\": []\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/questions/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"questions",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Question",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "56711783-ca87-44e3-ae90-bf3c84efe91e",
+								"exec": [
+									"pm.test(\"response is ok\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"response has the correct number of questions\", function () {",
+									"    pm.sendRequest({",
+									"        url: 'http://localhost:8080/questions',",
+									"        method: 'GET',",
+									"    }, function (err, res) {",
+									"        pm.expect(pm.response.json().length).to.be.equal(2);",
+									"    });",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pass1",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "user1",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/questions/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"questions",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "basic",
+				"basic": [
+					{
+						"key": "password",
+						"value": "pass1",
+						"type": "string"
+					},
+					{
+						"key": "username",
+						"value": "user1",
+						"type": "string"
+					}
+				]
+			}
+		},
+		{
+			"name": "Answer Requests",
+			"item": [
+				{
+					"name": "Get All Answers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "84f0d350-0ea7-453f-82e4-af778e56af19",
+								"exec": [
+									"pm.test(\"response is ok\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"received all answers\", function(){\r",
+									"    var answers = pm.response.json();\r",
+									"    pm.expect(answers.length).to.be.equal(0);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pass1",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "user1",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/answers",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"answers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create an answer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e5e756d7-b488-4353-9b31-7ae5b598433b",
+								"exec": [
+									"pm.test(\"response is ok\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"received created answer\", function(){",
+									"    var expectedAnswer = {",
+									"        \"id\": 1,",
+									"        question: {",
+									"           \"id\": \"\",",
+									"        \t\"user\": {",
+									"            \t\"id\": 2,",
+									"            \t\"username\": \"user2\",",
+									"            \t\"score\": 0,",
+									"            \t\"isAdmin\": false,",
+									"            \t\"isBanned\": true",
+									"        \t},",
+									"        \t\"title\": \"Fourth question\",",
+									"        \t\"text\": \"This is a postman test\",",
+									"        \t\"creationDate\": null,",
+									"        \t\"voteCount\": 0,",
+									"        \t\"tags\": [",
+									"            \t\"test\",",
+									"            \t\"postman\"",
+									"        \t]",
+									"        },",
+									"    \t\"user\": {",
+									"        \t\"id\": 2,",
+									"        \t\"username\": \"user2\",",
+									"        \t\"score\": 0,",
+									"        \t\"isAdmin\": false,",
+									"        \t\"isBanned\": true",
+									"    \t},",
+									"        \"text\": \"new answer\",",
+									"        \"creationDate\" : null,",
+									"        \"voteCount\": 0",
+									"    }",
+									"    ",
+									"    var answer = pm.response.json();",
+									"    pm.expect(answer.id).to.be.equal(expectedAnswer.id);",
+									"    pm.expect(answer.text).to.be.equal(expectedAnswer.text);",
+									"    pm.expect(answer.voteCount).to.be.equal(expectedAnswer.voteCount);",
+									"});",
+									"",
+									"pm.test(\"one extra test was added\", function(){",
+									"    pm.sendRequest({",
+									"        url: 'http://localhost:8080/answers',",
+									"        method: 'GET',",
+									"    }, function (err, res) {",
+									"        pm.expect(pm.response.json().length).to.be.equal(1);",
+									"    });",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pass1",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "user1",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": \"\",\r\n    \"question\": {\r\n       \"id\": 1,\r\n    \t\"user\": {\r\n        \t\"id\": 2,\r\n        \t\"username\": \"user2\",\r\n        \t\"score\": 0,\r\n        \t\"isAdmin\": false,\r\n        \t\"isBanned\": true\r\n    \t},\r\n    \t\"title\": \"Fourth question\",\r\n    \t\"text\": \"This is a postman test\",\r\n    \t\"creationDate\": null,\r\n    \t\"voteCount\": 0,\r\n    \t\"tags\": [\r\n        \t\"test\",\r\n        \t\"postman\"\r\n    \t]\r\n    },\r\n\t\"user\": {\r\n    \t\"id\": 2,\r\n    \t\"username\": \"user2\",\r\n    \t\"score\": 0,\r\n    \t\"isAdmin\": false,\r\n    \t\"isBanned\": true\r\n\t},\r\n    \"text\": \"new answer\",\r\n    \"creationDate\" : null,\r\n    \"voteCount\": 0\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/answers",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"answers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit an answer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e54407c6-ca74-4f8d-949c-fb0780f872c6",
+								"exec": [
+									"pm.test(\"response is ok\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"the text was edited\", function(){\r",
+									"    var answer = pm.response.json();\r",
+									"    pm.expect(answer.text).to.be.equal(\"edited\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pass1",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "user1",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 1,\n    \"question\": {\n        \"id\": 1,\n        \"user\": {\n            \"id\": 1,\n            \"username\": \"user1\",\n            \"score\": 0,\n            \"isAdmin\": true,\n            \"isBanned\": false\n        },\n        \"title\": \"Prima intrebare\",\n        \"text\": \"Acesta este primul text la prima intrebare\",\n        \"creationDate\": \"2019-05-23T16:42:34.641+0000\",\n        \"voteCount\": 0,\n        \"tags\": [\n            \"q1\"\n        ]\n    },\n    \"user\": {\n        \"id\": 1,\n        \"username\": \"user1\",\n        \"score\": 0,\n        \"isAdmin\": true,\n        \"isBanned\": false\n    },\n    \"text\": \"edited\",\n    \"creationDate\": \"2019-05-23T16:44:19.009+0000\",\n    \"voteCount\": 0\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/answers/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"answers",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete an answer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d40b3a72-4937-42b4-b632-b935d9136306",
+								"exec": [
+									"pm.test(\"response is ok\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"response has the correct number of answers\", function () {",
+									"    pm.sendRequest({",
+									"        url: 'http://localhost:8080/answers',",
+									"        method: 'GET',",
+									"    }, function (err, res) {",
+									"        pm.expect(pm.response.json().length).to.be.equal(0);",
+									"    });",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pass1",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "user1",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/answers/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"answers",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Vote Requests",
+			"item": [
+				{
+					"name": "Upvote Question",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f51b47f6-c8cf-4ea8-afea-41b761189f57",
+								"exec": [
+									"pm.test(\"response is ok\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"check if vote count was updated\", function(){\r",
+									"    pm.sendRequest({\r",
+									"        url: 'http://localhost:8080/questions',\r",
+									"        method: 'GET',\r",
+									"    }, function (err, res) {\r",
+									"        pm.expect(pm.response.json()[1].voteCount).to.be.equal(1);\r",
+									"    });\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pass1",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "user1",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/questions/2/upvote",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"questions",
+								"2",
+								"upvote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Downvote Question",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "eebb5ebe-8e72-484a-8891-fda2a437e534",
+								"exec": [
+									"pm.test(\"response is ok\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"check if vote count was updated\", function(){\r",
+									"    pm.sendRequest({\r",
+									"        url: 'http://localhost:8080/questions',\r",
+									"        method: 'GET',\r",
+									"    }, function (err, res) {\r",
+									"        pm.expect(pm.response.json()[1].voteCount).to.be.equal(-1);\r",
+									"    });\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pass1",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "user1",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/questions/2/downvote",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"questions",
+								"2",
+								"downvote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upvote Answer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ade4dbfd-440a-4bc8-8f88-131a96b70ffe",
+								"exec": [
+									"pm.test(\"response is ok\", function () {\r",
+									"    pm.response.to.have.status(403);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"should return an error\", function(){\r",
+									"    pm.expect(pm.response.json().type).to.be.equal(\"You cannot vote your own question/answer\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pass1",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "user1",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/answers/1/upvote",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"answers",
+								"1",
+								"upvote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Downvote Answer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "45ec15b1-076d-4e59-a209-3090c9b6149a",
+								"exec": [
+									"pm.test(\"response is ok\", function () {\r",
+									"    pm.response.to.have.status(403);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"should return an error\", function(){\r",
+									"    pm.expect(pm.response.json().type).to.be.equal(\"You cannot vote your own question/answer\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pass1",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "user1",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/answers/1/downvote",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"answers",
+								"1",
+								"downvote"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "pass1",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "user1",
+				"type": "string"
+			}
+		]
+	}
+}

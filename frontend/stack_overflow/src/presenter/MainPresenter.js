@@ -1,7 +1,10 @@
 import QuestionsTablePresenter from "./QuestionsTablePresenter";
 import * as userSelectors from "../model/user/userSelectors";
-import * as userActions from "../model/user/userActions";
-import store from "../model/store/store";
+import QuestionRestClient from "../rest/QuestionRestClient";
+import UserRestClient from "../rest/UserRestClient";
+import invoker from "../model/command/Invoker";
+import { LoadQuestionsCommand } from "../model/question/questionCommands";
+import { LoadUsersCommand } from "../model/user/userCommands";
 
 class MainPresenter {
 
@@ -34,12 +37,36 @@ class MainPresenter {
     }
 
     onBan(userId) {
-        let selectedUser = userSelectors.findById(userId);
-        store.dispatch(userActions.ban(selectedUser));
+        let loggedUser = userSelectors.getLoggedUser();
+        let userClient = new UserRestClient(loggedUser.username, loggedUser.password);
+        userClient.ban(userId).then(response => {
+            if (response.type !== undefined) {
+                window.alert(response.type);
+            }
+        });
+    }
+
+    onUndo() {
+        invoker.undo();
+    }
+
+    onRedo() {
+        invoker.redo();
     }
 
     onInit() {
-        store.dispatch(userActions.loadUsers());
+
+        let loggedUser = userSelectors.getLoggedUser();
+        let userClient = new UserRestClient(loggedUser.username, loggedUser.password);
+        let questionClient = new QuestionRestClient(loggedUser.username, loggedUser.password);
+
+        questionClient.loadQuestions().then(questions => {
+            invoker.execute(new LoadQuestionsCommand(questions));
+        });
+
+        userClient.loadUsers().then(users => {
+            invoker.execute(new LoadUsersCommand(users));
+        });
     }
 }
 

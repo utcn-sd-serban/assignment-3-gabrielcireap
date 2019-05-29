@@ -1,12 +1,9 @@
-import * as answerActions from "../model/answer/answerActions";
 import * as answerSelectors from "../model/answer/answerSelectors";
 import * as userSelectors from "../model/user/userSelectors";
-import * as userActions from "../model/user/userActions";
-import * as voteSelectors from "../model/vote/voteSelectors";
-import * as voteActions from "../model/vote/voteActions";
-import store from "../model/store/store";
 import AnswerRestClient from "../rest/AnswerRestClient";
-const client = new AnswerRestClient("user1", "pass1");
+import VoteRestClient from "../rest/VoteRestClient";
+import invoker from "../model/command/Invoker";
+import { LoadAnswersCommand, ChangeNewAnswerPropertyCommand } from "../model/answer/answerCommands";
 
 class AnswersTablePresenter {
 
@@ -15,109 +12,75 @@ class AnswersTablePresenter {
         let loggedUser = userSelectors.getLoggedUser();
         let newAnswer = answerSelectors.getNewAnswer();
 
-        client.addAnswer(loggedUser, selectedQuestion, newAnswer.text, 0)
-            .then(answer => {
-                store.dispatch(answerActions.addAnswer(answer));
-            });
+        let answerClient = new AnswerRestClient(loggedUser.username, loggedUser.password);
+        answerClient.addAnswer(loggedUser, selectedQuestion, newAnswer.text, 0).then(response => {
+            if (response.type !== undefined) {
+                window.alert(response.type);
+            }
+        });
 
-        store.dispatch(answerActions.changeNewAnswerProperty("text", ""));
+        invoker.execute(new ChangeNewAnswerPropertyCommand("text", ""));
     }
 
     onChange(property, value) {
-        store.dispatch(answerActions.changeNewAnswerProperty(property, value));
+        invoker.execute(new ChangeNewAnswerPropertyCommand(property, value));
     }
 
     onEditAnswer(id) {
 
-        let currentAnswer = answerSelectors.findBySearchedQuestionId(id);
+        let currentAnswer = answerSelectors.findById(id);
         currentAnswer.text = answerSelectors.getNewAnswer().text;
-        let loggedUser = userSelectors.getLoggedUser();
 
-        if (currentAnswer.user.username === loggedUser.username && currentAnswer.user.password === loggedUser.password
-            || loggedUser.isAdmin === true) {
-            client.editAnswer(currentAnswer).then(answer => {
-                debugger;
-                store.dispatch(answerActions.editAnswer(answer));
-            });
-        } else {
-            window.alert("You are neither the author nor an admin!");
-        }
-        store.dispatch(answerActions.changeNewAnswerProperty("text", ""));
+        let loggedUser = userSelectors.getLoggedUser();
+        let answerClient = new AnswerRestClient(loggedUser.username, loggedUser.password);
+        answerClient.editAnswer(currentAnswer).then(response => {
+            if (response.type !== undefined) {
+                window.alert(response.type);
+            }
+        });
+
+        invoker.execute(new ChangeNewAnswerPropertyCommand("text", ""));
     }
 
     onDeleteAnswer(id) {
-
-        let currentAnswer = answerSelectors.findBySearchedQuestionId(id);
         let loggedUser = userSelectors.getLoggedUser();
-
-        if (currentAnswer.user.username === loggedUser.username && currentAnswer.user.password === loggedUser.password
-            || loggedUser.isAdmin === true) {
-            store.dispatch(answerActions.deleteAnswer(currentAnswer));
-        } else {
-            window.alert("You are neither the author nor the admin!");
-        }
+        let answerClient = new AnswerRestClient(loggedUser.username, loggedUser.password);
+        answerClient.deleteAnswer(id).then(status => {
+            if (status >= 300) {
+                window.alert("Cannot find answer!");
+            }
+        });
     }
 
     onUpvoteAnswer(answerId) {
-        let currentAnswer = answerSelectors.findBySearchedQuestionId(answerId);
         let loggedUser = userSelectors.getLoggedUser();
-
-        if (currentAnswer.user.username === loggedUser.username && currentAnswer.user.password === loggedUser.password) {
-            window.alert("Cannot vote your own question!");
-        } else {
-            let currentVote = voteSelectors.findByAnswerId(currentAnswer.id, loggedUser.id);
-            if (currentVote.length > 0) {
-
-                if (currentVote[0].isUpvote === true) {
-                    window.alert("You cannot vote twice!");
-                } else {
-                    currentVote[0].isUpvote = true;
-                    store.dispatch(voteActions.update(currentVote[0]));
-                    store.dispatch(userActions.updateScore(currentAnswer.user, 12));
-                    store.dispatch(userActions.updateScore(loggedUser, 1));
-                    store.dispatch(answerActions.upvote(currentAnswer, 2));
-                }
-
-            } else {
-                store.dispatch(voteActions.addVote(undefined, currentAnswer, loggedUser, true));
-                store.dispatch(userActions.updateScore(currentAnswer.user, 10));
-                store.dispatch(answerActions.upvote(currentAnswer, 1));
+        let voteClient = new VoteRestClient(loggedUser.username, loggedUser.password);
+        voteClient.upvoteAnswer(answerId).then(status => {
+            if (status === 403) {
+                window.alert("You cannot vote your own answer");
+            } else if (status === 400) {
+                window.alert("You cannot upvote twice!");
             }
-        }
+        });
     }
 
     onDownvoteAnswer(answerId) {
-        let currentAnswer = answerSelectors.findBySearchedQuestionId(answerId);
         let loggedUser = userSelectors.getLoggedUser();
-
-        if (currentAnswer.user.username === loggedUser.username && currentAnswer.user.password === loggedUser.password) {
-            window.alert("Cannot vote your own question!");
-        } else {
-            let currentVote = voteSelectors.findByAnswerId(currentAnswer.id, loggedUser.id);
-            if (currentVote.length > 0) {
-
-                if (currentVote[0].isUpvote === false) {
-                    window.alert("You cannot vote twice!");
-                } else {
-                    currentVote[0].isUpvote = false;
-                    store.dispatch(voteActions.update(currentVote[0]));
-                    store.dispatch(userActions.updateScore(currentAnswer.user, -12));
-                    store.dispatch(userActions.updateScore(loggedUser, -1));
-                    store.dispatch(answerActions.downvote(currentAnswer, 2));
-                }
-
-            } else {
-                store.dispatch(voteActions.addVote(undefined, currentAnswer, loggedUser, false));
-                store.dispatch(userActions.updateScore(currentAnswer.user, -2));
-                store.dispatch(userActions.updateScore(loggedUser, -1));
-                store.dispatch(answerActions.downvote(currentAnswer, 1));
+        let voteClient = new VoteRestClient(loggedUser.username, loggedUser.password);
+        voteClient.downvoteAnswer(answerId).then(status => {
+            if (status === 403) {
+                window.alert("You cannot vote your own question");
+            } else if (status === 400) {
+                window.alert("You cannot downvote twice!");
             }
-        }
+        });
     }
 
-    onInit(questionId) {
-        client.findByQuestion(questionId).then(answers => {
-            store.dispatch(answerActions.findByQuestion(answers));
+    onInit() {
+        let loggedUser = userSelectors.getLoggedUser();
+        let answerClient = new AnswerRestClient(loggedUser.username, loggedUser.password);
+        answerClient.loadAnswers().then(answers => {
+            invoker.execute(new LoadAnswersCommand(answers));
         });
     }
 }

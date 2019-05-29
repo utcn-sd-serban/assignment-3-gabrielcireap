@@ -1,15 +1,16 @@
 package com.gabrielcireap.stackOverflow.service;
 
-import com.gabrielcireap.stackOverflow.dto.UserRegisterDTO;
 import com.gabrielcireap.stackOverflow.dto.UserShowDTO;
 import com.gabrielcireap.stackOverflow.entity.User;
-import com.gabrielcireap.stackOverflow.exception.BannedUserException;
+import com.gabrielcireap.stackOverflow.event.UserCreatedEvent;
+import com.gabrielcireap.stackOverflow.event.UserUpdatedEvent;
+import com.gabrielcireap.stackOverflow.exception.DuplicateUserException;
 import com.gabrielcireap.stackOverflow.exception.NotEnoughPermissionsException;
 import com.gabrielcireap.stackOverflow.exception.UserNotFoundException;
-import com.gabrielcireap.stackOverflow.exception.UserNotLoggedInException;
 import com.gabrielcireap.stackOverflow.repository.RepositoryFactory;
 import com.gabrielcireap.stackOverflow.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -21,7 +22,8 @@ import java.util.stream.Collectors;
 public class UserManagementService {
 
     private final RepositoryFactory repositoryFactory;
-    private User currentUser = new User(1, "user1", "pass1", "email1", 0, true, false);
+    private final ApplicationEventPublisher eventPublisher;
+    private User currentUser;
 
     @Transactional
     public List<UserShowDTO> listUsers() {
@@ -35,37 +37,30 @@ public class UserManagementService {
         userRepository.remove(user);
     }
 
-    /*@Transactional
-    public UserDTO save(String username, String password, String email) {
-        Optional<UserDTO> user = listUsers().stream().filter(user1 -> user1.getEmail().equals(email) || user1.getUsername().equals(username)).findFirst();
-        if (user.isPresent()) {
+    @Transactional
+    public UserShowDTO save(String username, String password, String email) {
+        List<User> users = repositoryFactory.createUserRepository().findAll().stream()
+                .filter(user -> user.getEmail().equals(email) || user.getUsername().equals(username))
+                .collect(Collectors.toList());
+
+        if (!users.isEmpty()) {
             throw new DuplicateUserException();
         }
-        return UserDTO.ofEntity(repositoryFactory.createUserRepository().save(new User(username, password, email)));
-    }*/
 
-    @Transactional
-    public UserShowDTO save(UserRegisterDTO userDTO) {
-        User user = new User();
-        user.setUsername(userDTO.getUsername());
-        user.setPassword(userDTO.getPassword());
-        user.setEmail(userDTO.getEmail());
-        user.setScore(userDTO.getScore());
-        user.setIsAdmin(userDTO.getIsAdmin());
-        user.setIsBanned(userDTO.getIsBanned());
-        user.setId(repositoryFactory.createUserRepository().save(user).getId());
-        return UserShowDTO.ofEntity(user);
+        UserShowDTO user = UserShowDTO.ofEntity(repositoryFactory.createUserRepository().save(new User(username, password, email)));
+        eventPublisher.publishEvent(new UserCreatedEvent(user));
+        return user;
     }
 
     @Transactional
     public UserShowDTO save(UserShowDTO userDTO) {
-        User user = new User();
-        user.setUsername(userDTO.getUsername());
+        User user = repositoryFactory.createUserRepository().findById(userDTO.getId()).orElseThrow(UserNotFoundException::new);
         user.setScore(userDTO.getScore());
         user.setIsAdmin(userDTO.getIsAdmin());
         user.setIsBanned(userDTO.getIsBanned());
-        user.setId(repositoryFactory.createUserRepository().save(user).getId());
-        return UserShowDTO.ofEntity(user);
+        UserShowDTO userShowDTO = UserShowDTO.ofEntity(repositoryFactory.createUserRepository().save(user));
+        eventPublisher.publishEvent(new UserUpdatedEvent(userShowDTO));
+        return userShowDTO;
     }
 
     @Transactional
@@ -74,16 +69,8 @@ public class UserManagementService {
     }
 
     @Transactional
-    public UserShowDTO login(UserRegisterDTO userRegisterDTO) {
-
-        User user = repositoryFactory.createUserRepository().findUserByLogin(userRegisterDTO.getUsername(), userRegisterDTO.getPassword()).orElseThrow(UserNotFoundException::new);
-        if (user.getIsBanned()) {
-            currentUser = null;
-            throw new BannedUserException();
-        } else {
-            currentUser = user;
-        }
-        return UserShowDTO.ofEntity(user);
+    public void login(User user) {
+        this.currentUser = user;
     }
 
     @Transactional
@@ -92,7 +79,6 @@ public class UserManagementService {
     }
 
     public UserShowDTO ban(int userId) {
-        checkIfUserIsLogged();
         if (!currentUser.getIsAdmin()) {
             throw new NotEnoughPermissionsException();
         }
@@ -100,14 +86,8 @@ public class UserManagementService {
         UserShowDTO user = findById(userId);
         user.setIsBanned(true);
         save(user);
+        eventPublisher.publishEvent(new UserUpdatedEvent(user));
         return user;
-    }
-
-    @Transactional
-    public void checkIfUserIsLogged() {
-        if (currentUser == null) {
-            throw new UserNotLoggedInException();
-        }
     }
 
     @Transactional

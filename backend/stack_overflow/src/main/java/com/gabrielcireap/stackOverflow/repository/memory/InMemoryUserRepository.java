@@ -42,15 +42,12 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public Optional<User> findUserByLogin(String username, String password) {
-        System.out.println(data.values());
-        List<User> u =  data.values().stream().filter(user -> user.getUsername().equals(username) && user.getPassword().equals(password)).collect(Collectors.toList());
-        System.out.println(u);
-        return Optional.ofNullable(u.get(0));
+    public Optional<User> findUserByUsername(String username) {
+        return data.values().stream().filter(user -> user.getUsername().equals(username)).findFirst();
     }
 
     @Override
-    public Optional<User> findUserByUsername(String username) {
-        return data.values().stream().filter(user -> user.getUsername().equals(username)).findFirst();
+    public void removeAll() {
+        data.clear();
     }
 }

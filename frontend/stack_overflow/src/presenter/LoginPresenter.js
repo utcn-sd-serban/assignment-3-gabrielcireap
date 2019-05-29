@@ -1,47 +1,51 @@
-import store from "../model/store/store";
-import * as userActions from "../model/user/userActions";
+import invoker from "../model/command/Invoker";
+import { LogUserCommand, ChangeNewUserPropertyCommand } from "../model/user/userCommands";
 import * as userSelectors from "../model/user/userSelectors";
+import UserRestClient from "../rest/UserRestClient";
+const userClient = new UserRestClient("", "");
 
 class LoginPresenter {
 
     onLogin() {
-
-        let newUser = userSelectors.getNewUser();
-        let currentUser = userSelectors.login(newUser.username, newUser.password);
-        console.log("current user = " + currentUser);
-        if (currentUser.length > 0) {
-            if (currentUser[0].isBanned === true) {
-                window.alert("User has been banned!");
+        var newUser = userSelectors.getNewUser();
+        userClient.login(newUser.username, newUser.password).then(user => {
+            if (user.username === undefined) {
+                window.alert("Username not found!");
             } else {
-                store.dispatch(userActions.logUser(currentUser[0]));
+                let logUser = {
+                    id: user.id,
+                    username: newUser.username,
+                    password: newUser.password,
+                    isAdmin: user.isAdmin,
+                    isBanned: user.isBanned,
+                    score: user.score
+                }
+                debugger;
+                invoker.execute(new LogUserCommand(logUser));
                 window.location.assign("#/index");
             }
-        } else {
-            window.alert("Account does not exist!");
-        }
-        
-        store.dispatch(userActions.changeNewUserProperty("username", ""));
-        store.dispatch(userActions.changeNewUserProperty("password", ""));
-        store.dispatch(userActions.changeNewUserProperty("email", ""));
+        });
+
+        invoker.execute(new ChangeNewUserPropertyCommand("username", ""));
+        invoker.execute(new ChangeNewUserPropertyCommand("password", ""));
+        invoker.execute(new ChangeNewUserPropertyCommand("email", ""));
     }
 
     onRegister() {
-
         let newUser = userSelectors.getNewUser();
-        let currentUser = userSelectors .login(newUser.username, newUser.password);
-        if (currentUser.length > 0) {
-            window.alert("User already exists!");
-        } else {
-            store.dispatch(userActions.addUser(newUser.username, newUser.password, newUser.email, 0, false, false));
-        }
-        
-        store.dispatch(userActions.changeNewUserProperty("username", ""));
-        store.dispatch(userActions.changeNewUserProperty("password", ""));
-        store.dispatch(userActions.changeNewUserProperty("email", ""));
+        userClient.register(newUser.username, newUser.password, newUser.email).then(status => {
+            if (status >= 300) {
+                window.alert("User already registered!");
+            }
+        });
+
+        invoker.execute(new ChangeNewUserPropertyCommand("username", ""));
+        invoker.execute(new ChangeNewUserPropertyCommand("password", ""));
+        invoker.execute(new ChangeNewUserPropertyCommand("email", ""));
     }
 
     onChange(property, value) {
-        store.dispatch(userActions.changeNewUserProperty(property, value));
+        invoker.execute(new ChangeNewUserPropertyCommand(property, value));
     }
 }
 

@@ -15,6 +15,12 @@ public interface DataQuestionRepository extends Repository<Question, Integer>, Q
         delete(question);
     }
 
+    void deleteAll();
+    @Override
+    default void removeAll() {
+        deleteAll();
+    }
+
     List<Question> findByTitleContaining(String title);
     @Override
     default List<Question> findByTitle(String text) {

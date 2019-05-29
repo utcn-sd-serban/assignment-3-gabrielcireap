@@ -1,7 +1,7 @@
 import React from "react";
 
 const AnswersTable = ({ answers, onEditAnswer, onDeleteAnswer, onUpvoteAnswer, onDownvoteAnswer, userToString, questionToString }) => (
-    <div>
+    <div className="container is-fluid">
         <table className="table" border="1">
             <thead>
                 <tr>
@@ -20,17 +20,17 @@ const AnswersTable = ({ answers, onEditAnswer, onDeleteAnswer, onUpvoteAnswer, o
             <tbody>
                 {
                     answers.map((answer, index) => (
-                        <tr key={index}>
+                        <tr key={index} data-cy="answer">
                             <td className="has-text-centered"> {answer.id} </td>
                             <td className="has-text-centered"> {userToString(answer.user)} </td>
                             <td className="has-text-centered"> {questionToString(answer.question)}</td>
                             <td className="has-text-centered"> {answer.text} </td>
                             <td className="has-text-centered"> {answer.creationDate} </td>
                             <td className="has-text-centered"> {answer.voteCount} </td>
-                            <td><button class="button is-link" onClick={() => onEditAnswer(answer.id)}> Edit </button></td>
-                            <td><button class="button is-warning" onClick={() => onDeleteAnswer(answer.id)}> Delete </button></td>
-                            <td><button class="button is-success" onClick={() => onUpvoteAnswer(answer.id)}> Upvote </button></td>
-                            <td><button class="button is-danger" onClick={() => onDownvoteAnswer(answer.id)}> Downvote </button></td>
+                            <td><button data-cy={"editAnswer" + index} className="button is-link" onClick={() => onEditAnswer(answer.id)}> Edit </button></td>
+                            <td><button data-cy={"deleteAnswer" + index} className="button is-warning" onClick={() => onDeleteAnswer(answer.id)}> Delete </button></td>
+                            <td><button data-cy={"upvoteAnswer" + index} className="button is-success" onClick={() => onUpvoteAnswer(answer.id)}> Upvote </button></td>
+                            <td><button data-cy={"downvoteAnswer" + index} className="button is-danger" onClick={() => onDownvoteAnswer(answer.id)}> Downvote </button></td>
                         </tr>
                     ))
                 }

@@ -38,15 +38,14 @@ public class JdbcUserRepository implements UserRepository {
     }
 
     @Override
-    public Optional<User> findById(int id) {
-        List<User> users = template.query("SELECT * FROM user WHERE id = ?", new UserMapper(), id);
-        return users.isEmpty() ? Optional.empty() : Optional.of(users.get(0));
+    public void removeAll() {
+        template.update("DELETE FROM user");
     }
 
     @Override
-    public Optional<User> findUserByLogin(String username, String password) {
-        List<User> users = template.query("SELECT * FROM user WHERE username = ? AND password = ?", new UserMapper(), username, password);
-        return users.isEmpty() ? Optional.empty() : Optional.ofNullable(users.get(0));
+    public Optional<User> findById(int id) {
+        List<User> users = template.query("SELECT * FROM user WHERE id = ?", new UserMapper(), id);
+        return users.isEmpty() ? Optional.empty() : Optional.of(users.get(0));
     }
 
     @Override

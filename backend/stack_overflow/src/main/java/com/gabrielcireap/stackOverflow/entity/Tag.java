@@ -19,4 +19,9 @@ public class Tag {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
+
+    public Tag(String name){
+        this.name = name;
+        this.id = null;
+    }
 }
